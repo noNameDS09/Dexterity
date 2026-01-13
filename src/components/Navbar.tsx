@@ -8,7 +8,7 @@ const Navbar = () => {
       className="
         w-full z-200
         flex items-center justify-between
-        px-6 sm:px-10 py-0
+        px-6 sm:px-10 py-0 mt-4
         "
     >
       {/* LEFT — COLLEGE LOGO */}
@@ -25,7 +25,7 @@ const Navbar = () => {
 
       {/* RIGHT — CLUB LOGOS */}
       <div className="flex items-center gap-4 z-10">
-        {["neura.jpeg", "cypher.jpeg", "aesa.jpeg"].map((logo, i) => (
+        {["neura.jpeg", "cypher.jpeg", "aesa.png"].map((logo, i) => (
           <Image
             key={i}
             src={`/logos/${logo}`} // 👈 replace

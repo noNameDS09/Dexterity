@@ -10,7 +10,9 @@ const Footer: React.FC = () => {
             <h3 className="text-xl font-bold text-amber-100 mb-4 font-cinzel">DEXTERITY</h3>
             <p className="text-stone-400 leading-relaxed">
               College Technical Fest<br />
-              Department of Computer Science
+              Department of Artificial Intelligence and Data Science<br />
+              Marathwada Mitra Mandal's College of Engineering<br />
+              Pune<br />
             </p>
           </div>
 
@@ -18,8 +20,8 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-semibold text-amber-200 mb-4 font-cinzel">Event Details</h4>
             <div className="text-stone-400 space-y-2">
-              <p><span className="text-stone-500">Date:</span> March 15-16, 2024</p>
-              <p><span className="text-stone-500">Venue:</span> Main Auditorium</p>
+              <p><span className="text-stone-500">Date:</span> Jan 24, 2026</p>
+              <p><span className="text-stone-500">Venue:</span> 6th Floor Main Building</p>
               <p><span className="text-stone-500">Time:</span> 9:00 AM - 6:00 PM</p>
             </div>
           </div>
@@ -28,8 +30,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-semibold text-amber-200 mb-4 font-cinzel">Coordinators</h4>
             <div className="text-stone-400 space-y-2">
-              <p>Dr. Sarah Johnson<br /><span className="text-stone-500">Faculty Coordinator</span></p>
-              <p>Alex Chen<br /><span className="text-stone-500">Student Coordinator</span></p>
+              <p>Rohit Dahiphale<br /><span className="text-stone-500">Student Coordinator</span></p>
+              <p>Atharv Yeole<br /><span className="text-stone-500">Student Coordinator</span></p>
+              <p>Madhura Patwardhan<br /><span className="text-stone-500">Student Coordinator</span></p>
             </div>
           </div>
         </div>
@@ -37,7 +40,7 @@ const Footer: React.FC = () => {
         {/* Bottom section */}
         <div className="border-t border-stone-800 pt-8 text-center">
           <p className="text-stone-500 text-sm">
-            © 2024 DEXTERITY. All rights reserved. | Where Logic Meets Legends
+            © 2026 DEXTERITY. All rights reserved. | Where Logic Meets Legends
           </p>
         </div>
       </div>

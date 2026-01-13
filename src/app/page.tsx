@@ -3,7 +3,7 @@ import About from '../components/About';
 import Events from '../components/Events';
 // import EventFlow from '../components/EventFlow';
 import CTA from '../components/CTA';
-// import Footer from '../components/Footer';
+import Footer from '../components/Footer';
 import ScrollStack, { ScrollStackItem } from '../components/ScrollStack';
 import MagicBento from '@/components/Temp';
 export default function Home() {
@@ -13,6 +13,7 @@ export default function Home() {
       <Events />
       <About />
       <CTA />
+      <Footer />
     </main>
   );
 }
