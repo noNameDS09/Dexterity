@@ -1300,18 +1300,45 @@ const EventsBento = () => {
       ]
     },
     {
-      id: "atheria",
-      title: "The Strategy Trial",
-      registerLink: "https://unstop.com/p/realm-of-atheria",
-      items: [
-        { label: "Concept", title: "Phygital", description: "Physical Board + Digital App" },
-        { label: "Team", title: "Squad Based", description: "Teams of 4 compete for dominance" },
-        { label: "Main Event", title: "Realm of Atheria", description: "Strategic Board Game Challenge", isMain: true },
-        { label: "Gameplay", title: "Tactical", description: "Resource management & attacks" },
-        { label: "Objective", title: "Conquer", description: "Capture zones via logical tasks" },
-        { label: "Date", title: "March 15th", description: "Live at the Main Auditorium" }
-      ]
+  id: "atheria",
+  title: "The Strategy Trial",
+  registerLink: "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
+  items: [
+    {
+      label: "Story",
+      title: "Fantasy Realm",
+      description: "Four ancient tribes race to conquer the Central Castle of Eternum using knowledge, courage, and strategy."
+    },
+    {
+      label: "Teams",
+      title: "Tribe Based",
+      description: "Flame, Aqua, Earth, and Wind tribes compete on separate paths toward the castle."
+    },
+    // Main Card (Will Span 2 cols)
+    {
+      label: "Main Event",
+      title: "Realm of Atheria",
+      description: "A phygital fantasy board game where teams advance by answering timed questions and overcoming strategic gates.",
+      isMain: true
+    },
+    {
+      label: "Gameplay",
+      title: "Turn Based",
+      description: "Teams choose hidden point chits (5, 10, 15) and move based on accuracy and speed."
+    },
+    {
+      label: "Objective",
+      title: "Castle Conquest",
+      description: "Be the first tribe to reach the central castle and claim the throne of Atheria."
+    },
+    // Footer Card (Will Span 2 cols)
+    {
+      label: "Duration",
+      title: "15–20 Minutes",
+      description: "Fast-paced, immersive gameplay with escalating tension and strategic twists."
     }
+  ]
+}
   ];
 
   return (
@@ -1429,10 +1456,10 @@ const EventsBento = () => {
            Stacks vertically (grid-cols-1) on mobile/tablet.
            Goes side-by-side (grid-cols-2) on XL screens (1280px+).
         */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 max-w-[1600px] mx-auto items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 max-w-400 mx-auto items-start border-t border-stone-700 pt-12">
           
           {events.map((event) => (
-            <div key={event.id} className="relative z-10 flex flex-col h-full">
+            <div key={event.id} className="relative z-10 flex flex-col h-full pt-6">
               {/* Event Header */}
               <div className="text-center mb-6 md:mb-8">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-100 tracking-wider mb-2 drop-shadow-lg">

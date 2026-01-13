@@ -42,7 +42,7 @@ const slowFloat = {
 
 const About: React.FC = () => {
   return (
-    <section className={`${cinzel.className} py-24 px-4 bg-linear-to-b from-stone-950 to-stone-900 relative overflow-hidden text-center`}>
+    <section className={`${cinzel.className} py-24 px-4 bg-linear-to-b from-stone-950 to-stone-950 relative overflow-hidden text-center`}>
       
       {/* Ambient Background Motion */}
       <motion.div
@@ -68,7 +68,7 @@ const About: React.FC = () => {
           variants={fadeUp}
           className="
             relative
-            bg-gradient-to-br from-stone-700/80 to-stone-800
+            bg-linear-to-br from-stone-950 to-stone-950 via-stone-900
             border border-stone-600
             rounded-2xl
             p-8 sm:p-10 md:p-14
@@ -81,7 +81,7 @@ const About: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             transition={{ duration: 1.2 }}
-            className="absolute inset-0 bg-gradient-to-br from-stone-950 via-stone-800 to-stone-900"
+            className="absolute inset-0 bg-linear-to-br from-stone-950 via-stone-900 to-stone-950"
           />
 
           <div className="relative z-10">
