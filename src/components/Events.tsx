@@ -1,7 +1,11 @@
 'use client'
 import React from 'react'
 import { motion } from 'framer-motion'
-
+import { Cinzel } from "next/font/google";
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+});
 const containerVariants = {
   hidden: {},
   visible: {
@@ -25,7 +29,7 @@ const fadeUp = {
 
 const Events: React.FC = () => {
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-stone-900 to-stone-800">
+    <section className={`${cinzel.className} text-center py-24 px-4 bg-linear-to-b from-stone-900 to-stone-950`} id='events'>
       <motion.div
         variants={containerVariants}
         initial="hidden"

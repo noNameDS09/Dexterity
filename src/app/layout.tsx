@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
+import GlobalNoise from "@/components/GlobalNoise";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,20 +20,27 @@ const cinzel = Cinzel({
 
 export const metadata: Metadata = {
   title: "DEXTERITY - Where Logic Meets Legends",
-  description: "College-level technical and non-technical fest featuring Etch and Realm of Atheria events.",
+  description:
+    "College-level technical and non-technical fest featuring Etch and Realm of Atheria events.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} antialiased bg-stone-950`}
       >
-        {children}
+        {/* Global background noise */}
+        <GlobalNoise />
+
+        {/* Site content */}
+        <div className="relative z-0">
+          {children}
+        </div>
       </body>
     </html>
   );
