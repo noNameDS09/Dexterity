@@ -1,43 +1,136 @@
+'use client'
 import React from 'react';
+import { motion } from 'framer-motion';
+
+const container = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const slowFloat = {
+  animate: {
+    y: [0, -6, 0],
+    transition: {
+      duration: 6,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};
 
 const About: React.FC = () => {
   return (
-    <section className="py-20 px-4 bg-linear-to-b from-stone-800 to-stone-900">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-linear-to-br from-stone-700 to-stone-800 p-8 md:p-12 rounded-lg border border-stone-600 shadow-2xl relative overflow-hidden">
-          {/* Stone texture overlay */}
-          <div className="absolute inset-0 opacity-50">
-            <div className="absolute inset-0 bg-linear-to-br from-stone-600/20 via-stone-500/10 to-stone-700/20"></div>
-          </div>
+    <section className="py-24 px-4 bg-gradient-to-b from-stone-800 to-stone-900 relative overflow-hidden">
+      
+      {/* Ambient Background Motion */}
+      <motion.div
+        variants={slowFloat}
+        animate="animate"
+        className="absolute -top-40 -left-40 w-96 h-96 bg-amber-400/5 rounded-full blur-[120px]"
+      />
+      <motion.div
+        variants={slowFloat}
+        animate="animate"
+        className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-400/5 rounded-full blur-[120px]"
+      />
+
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        className="max-w-4xl mx-auto relative"
+      >
+        {/* Card */}
+        <motion.div
+          variants={fadeUp}
+          className="
+            relative
+            bg-gradient-to-br from-stone-700/80 to-stone-800/90
+            border border-stone-600
+            rounded-2xl
+            p-8 sm:p-10 md:p-14
+            shadow-xl
+            overflow-hidden
+          "
+        >
+          {/* Subtle texture overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            transition={{ duration: 1.2 }}
+            className="absolute inset-0 bg-gradient-to-br from-stone-600/20 via-stone-500/10 to-stone-700/20"
+          />
 
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold text-amber-100 mb-8 font-cinzel text-center">
+            {/* Heading */}
+            <motion.h2
+              variants={fadeUp}
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-amber-100 font-cinzel text-center mb-10 tracking-wide"
+            >
               About Dexterity
-            </h2>
-            <div className="text-lg md:text-xl text-stone-300 leading-relaxed space-y-6">
-              <p>
-                DEXTERITY is a premier college-level fest that bridges the worlds of technology and imagination,
-                where participants engage in competitive challenges that test both logical prowess and creative strategy.
-              </p>
-              <p>
-                Our events are designed to push boundaries, foster innovation, and celebrate the spirit of exploration.
-                Whether you're a coding virtuoso or a strategic thinker, DEXTERITY offers trials that challenge your
-                intellect, creativity, and teamwork in equal measure.
-              </p>
-              <p>
-                Join us in this immersive journey where ancient wisdom meets modern technology,
-                and emerge victorious from the ultimate test of dexterity.
-              </p>
-            </div>
+            </motion.h2>
+
+            {/* Content */}
+            <motion.div
+              variants={container}
+              className="text-base sm:text-lg md:text-xl text-stone-300 leading-relaxed space-y-6"
+            >
+              <motion.p variants={fadeUp}>
+                <span className="text-amber-200 font-medium">DEXTERITY</span> is a
+                premier college-level fest that bridges the worlds of technology and
+                imagination—where participants engage in competitive challenges that
+                test both logical prowess and creative strategy.
+              </motion.p>
+
+              <motion.p variants={fadeUp}>
+                Our events are meticulously crafted to push boundaries, foster
+                innovation, and celebrate the spirit of exploration. From analytical
+                problem-solving to strategic gameplay, every trial is designed to
+                challenge the intellect while encouraging collaboration.
+              </motion.p>
+
+              <motion.p variants={fadeUp}>
+                Step into an immersive realm where ancient wisdom meets modern
+                technology, and emerge victorious from the ultimate test of
+                adaptability, ingenuity, and <span className="italic">dexterity</span>.
+              </motion.p>
+            </motion.div>
           </div>
 
-          {/* Decorative corners */}
-          <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-amber-400/50"></div>
-          <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-amber-400/50"></div>
-          <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-amber-400/50"></div>
-          <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-amber-400/50"></div>
-        </div>
-      </div>
+          {/* Decorative animated corners */}
+          {[
+            "top-4 left-4 border-l-2 border-t-2",
+            "top-4 right-4 border-r-2 border-t-2",
+            "bottom-4 left-4 border-l-2 border-b-2",
+            "bottom-4 right-4 border-r-2 border-b-2",
+          ].map((pos, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
+              className={`absolute ${pos} w-8 h-8 border-amber-400/50`}
+            />
+          ))}
+        </motion.div>
+      </motion.div>
     </section>
   );
 };
