@@ -2,7 +2,7 @@ import Hero from '../components/Hero';
 import About from '../components/About';
 import Events from '../components/Events';
 // import EventFlow from '../components/EventFlow';
-// import CTA from '../components/CTA';
+import CTA from '../components/CTA';
 // import Footer from '../components/Footer';
 import ScrollStack, { ScrollStackItem } from '../components/ScrollStack';
 import MagicBento from '@/components/Temp';
@@ -12,7 +12,7 @@ export default function Home() {
       <Hero />
       <Events />
       <About />
-      {/* <MagicBento /> */}
+      <CTA />
     </main>
   );
 }

@@ -10,7 +10,7 @@ export default function GlobalNoise() {
         patternScaleX={1}
         patternScaleY={1}
         patternRefreshInterval={2}
-        patternAlpha={15}
+        patternAlpha={25}
       />
     </div>
   );

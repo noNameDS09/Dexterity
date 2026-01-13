@@ -46,7 +46,7 @@ const Hero: React.FC = () => {
 
   return (
     <section
-      className={`${cinzel.className} relative min-h-screen flex flex-col items-center justify-center bg-stone-950 overflow-hidden`}
+      className={`${cinzel.className} -mt-16 relative min-h-screen flex flex-col items-center justify-center bg-stone-950 overflow-hidden`}
     >
       {/* ===== BACKGROUND NOISE ===== */}
       {/* <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
@@ -86,7 +86,7 @@ const Hero: React.FC = () => {
       >
         <motion.h1
           variants={letterVars}
-          className={`${cinzel.className} font-cinzel font-bold text-transparent bg-clip-text bg-linear-to-b from-amber-100 via-amber-200/80 to-stone-500 drop-shadow-[0_0_15px_rgba(252,211,77,0.3)] mb-6 text-5xl sm:text-6xl md:text-8xl lg:text-9xl tracking-[0.08em] sm:tracking-[0.12em] md:tracking-wider leading-none py-6`}
+          className={`${cinzel.className} font-cinzel font-bold text-transparent bg-clip-text bg-linear-to-b from-amber-100 via-amber-200/80 to-stone-500 drop-shadow-[0_0_15px_rgba(252,211,77,0.3)] mb-6 text-[40px] sm:text-6xl md:text-8xl lg:text-9xl tracking-[0.08em] sm:tracking-[0.12em] md:tracking-wider leading-none py-6`}
         >
           DEXTERITY
         </motion.h1>

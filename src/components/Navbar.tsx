@@ -6,13 +6,13 @@ const Navbar = () => {
   return (
     <nav
       className="
-        w-full z-10
+        w-full z-200
         flex items-center justify-between
         px-6 sm:px-10 py-0
         "
     >
       {/* LEFT — COLLEGE LOGO */}
-      <div className="flex items-center">
+      <div className="flex items-center z-10">
         <Image
           src="/logos/mmcoe.jpeg" // 👈 replace
           alt="College Logo"
@@ -24,7 +24,7 @@ const Navbar = () => {
       </div>
 
       {/* RIGHT — CLUB LOGOS */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 z-10">
         {["neura.jpeg", "cypher.jpeg", "aesa.jpeg"].map((logo, i) => (
           <Image
             key={i}

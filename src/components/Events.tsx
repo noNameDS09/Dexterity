@@ -492,7 +492,7 @@
 //             --border-color: #57534e;
 //             --background-dark: #1c1917;
 //           }
-          
+
 //           .card--border-glow::after {
 //             content: '';
 //             position: absolute;
@@ -512,15 +512,15 @@
 //             transition: opacity 0.3s ease;
 //             z-index: 1;
 //           }
-          
+
 //           .card--border-glow:hover::after {
 //             opacity: 1;
 //           }
-          
+
 //           .event-card {
 //             min-height: 500px;
 //           }
-          
+
 //           @media (max-width: 768px) {
 //             .event-card {
 //               min-height: 450px;
@@ -953,9 +953,9 @@
 //     </>
 //   )
 // }
-'use client'
-import React, { useRef, useEffect, useState } from 'react';
-import { gsap } from 'gsap';
+"use client";
+import React, { useRef, useEffect, useState } from "react";
+import { gsap } from "gsap";
 import { Cinzel } from "next/font/google";
 
 // --- Fonts & Constants ---
@@ -966,7 +966,7 @@ const cinzel = Cinzel({
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
-const DEFAULT_GLOW_COLOR = '255, 160, 0'; // Amber/Gold Color
+const DEFAULT_GLOW_COLOR = "255, 160, 0"; // Amber/Gold Color
 const MOBILE_BREAKPOINT = 768;
 
 // --- Types ---
@@ -985,9 +985,13 @@ interface EventSectionProps {
 }
 
 // --- Helper Functions ---
-const createParticleElement = (x: number, y: number, color: string): HTMLDivElement => {
-  const el = document.createElement('div');
-  el.className = 'particle';
+const createParticleElement = (
+  x: number,
+  y: number,
+  color: string
+): HTMLDivElement => {
+  const el = document.createElement("div");
+  el.className = "particle";
   el.style.cssText = `
     position: absolute;
     width: 4px;
@@ -1005,27 +1009,34 @@ const createParticleElement = (x: number, y: number, color: string): HTMLDivElem
 
 const calculateSpotlightValues = (radius: number) => ({
   proximity: radius * 0.5,
-  fadeDistance: radius * 0.75
+  fadeDistance: radius * 0.75,
 });
 
-const updateCardGlowProperties = (card: HTMLElement, mouseX: number, mouseY: number, glow: number, radius: number) => {
+const updateCardGlowProperties = (
+  card: HTMLElement,
+  mouseX: number,
+  mouseY: number,
+  glow: number,
+  radius: number
+) => {
   const rect = card.getBoundingClientRect();
   const relativeX = ((mouseX - rect.left) / rect.width) * 100;
   const relativeY = ((mouseY - rect.top) / rect.height) * 100;
 
-  card.style.setProperty('--glow-x', `${relativeX}%`);
-  card.style.setProperty('--glow-y', `${relativeY}%`);
-  card.style.setProperty('--glow-intensity', glow.toString());
-  card.style.setProperty('--glow-radius', `${radius}px`);
+  card.style.setProperty("--glow-x", `${relativeX}%`);
+  card.style.setProperty("--glow-y", `${relativeY}%`);
+  card.style.setProperty("--glow-intensity", glow.toString());
+  card.style.setProperty("--glow-radius", `${radius}px`);
 };
 
 const useMobileDetection = () => {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    const checkMobile = () =>
+      setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
   return isMobile;
 };
@@ -1043,15 +1054,15 @@ const GlobalSpotlight: React.FC<{
   disableAnimations = false,
   enabled = true,
   spotlightRadius = DEFAULT_SPOTLIGHT_RADIUS,
-  glowColor = DEFAULT_GLOW_COLOR
+  glowColor = DEFAULT_GLOW_COLOR,
 }) => {
   const spotlightRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (disableAnimations || !containerRef?.current || !enabled) return;
 
-    const spotlight = document.createElement('div');
-    spotlight.className = 'global-spotlight';
+    const spotlight = document.createElement("div");
+    spotlight.className = "global-spotlight";
     spotlight.style.cssText = `
       position: fixed;
       width: 800px;
@@ -1077,60 +1088,88 @@ const GlobalSpotlight: React.FC<{
     const handleMouseMove = (e: MouseEvent) => {
       if (!spotlightRef.current || !containerRef.current) return;
 
-      const grids = containerRef.current.querySelectorAll('.bento-grid');
+      const grids = containerRef.current.querySelectorAll(".bento-grid");
       let mouseInsideAny = false;
 
-      grids.forEach(grid => {
+      grids.forEach((grid) => {
         const rect = grid.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        if (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        ) {
           mouseInsideAny = true;
         }
       });
 
-      const cards = containerRef.current.querySelectorAll('.card');
+      const cards = containerRef.current.querySelectorAll(".card");
 
       if (!mouseInsideAny) {
         gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3 });
-        cards.forEach(card => (card as HTMLElement).style.setProperty('--glow-intensity', '0'));
+        cards.forEach((card) =>
+          (card as HTMLElement).style.setProperty("--glow-intensity", "0")
+        );
         return;
       }
 
-      const { proximity, fadeDistance } = calculateSpotlightValues(spotlightRadius);
+      const { proximity, fadeDistance } =
+        calculateSpotlightValues(spotlightRadius);
       let minDistance = Infinity;
 
-      cards.forEach(card => {
+      cards.forEach((card) => {
         const cardElement = card as HTMLElement;
         const cardRect = cardElement.getBoundingClientRect();
         const centerX = cardRect.left + cardRect.width / 2;
         const centerY = cardRect.top + cardRect.height / 2;
-        const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY) - Math.max(cardRect.width, cardRect.height) / 2;
+        const distance =
+          Math.hypot(e.clientX - centerX, e.clientY - centerY) -
+          Math.max(cardRect.width, cardRect.height) / 2;
         const effectiveDistance = Math.max(0, distance);
 
         minDistance = Math.min(minDistance, effectiveDistance);
 
         let glowIntensity = 0;
         if (effectiveDistance <= proximity) glowIntensity = 1;
-        else if (effectiveDistance <= fadeDistance) glowIntensity = (fadeDistance - effectiveDistance) / (fadeDistance - proximity);
+        else if (effectiveDistance <= fadeDistance)
+          glowIntensity =
+            (fadeDistance - effectiveDistance) / (fadeDistance - proximity);
 
-        updateCardGlowProperties(cardElement, e.clientX, e.clientY, glowIntensity, spotlightRadius);
+        updateCardGlowProperties(
+          cardElement,
+          e.clientX,
+          e.clientY,
+          glowIntensity,
+          spotlightRadius
+        );
       });
 
-      gsap.to(spotlightRef.current, { left: e.clientX, top: e.clientY, duration: 0.1 });
-      
-      const targetOpacity = minDistance <= proximity ? 0.8 : minDistance <= fadeDistance ? ((fadeDistance - minDistance) / (fadeDistance - proximity)) * 0.8 : 0;
+      gsap.to(spotlightRef.current, {
+        left: e.clientX,
+        top: e.clientY,
+        duration: 0.1,
+      });
+
+      const targetOpacity =
+        minDistance <= proximity
+          ? 0.8
+          : minDistance <= fadeDistance
+          ? ((fadeDistance - minDistance) / (fadeDistance - proximity)) * 0.8
+          : 0;
       gsap.to(spotlightRef.current, { opacity: targetOpacity, duration: 0.2 });
     };
 
     const handleMouseLeave = () => {
-      if (spotlightRef.current) gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3 });
+      if (spotlightRef.current)
+        gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3 });
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
       spotlightRef.current?.remove();
     };
   }, [containerRef, disableAnimations, enabled, spotlightRadius, glowColor]);
@@ -1150,35 +1189,40 @@ const ParticleCard: React.FC<{
   onClick?: () => void;
 }> = ({
   children,
-  className = '',
+  className = "",
   disableAnimations = false,
   particleCount = DEFAULT_PARTICLE_COUNT,
   glowColor = DEFAULT_GLOW_COLOR,
   enableTilt = true,
   clickEffect = false,
   enableMagnetism = false,
-  onClick
+  onClick,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
-  
+
   useEffect(() => {
     if (disableAnimations || !cardRef.current) return;
     const element = cardRef.current;
 
     const spawnParticles = () => {
-      if(!isHoveredRef.current) return;
+      if (!isHoveredRef.current) return;
       const { width, height } = element.getBoundingClientRect();
-      
-      for(let i = 0; i < 3; i++) {
-        const p = createParticleElement(Math.random() * width, Math.random() * height, glowColor);
+
+      for (let i = 0; i < 3; i++) {
+        const p = createParticleElement(
+          Math.random() * width,
+          Math.random() * height,
+          glowColor
+        );
         element.appendChild(p);
-        
-        gsap.fromTo(p, 
-          { scale: 0, opacity: 0 }, 
-          { 
-            scale: 1, 
-            opacity: 1, 
+
+        gsap.fromTo(
+          p,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
             duration: 0.3,
             onComplete: () => {
               gsap.to(p, {
@@ -1186,9 +1230,9 @@ const ParticleCard: React.FC<{
                 y: (Math.random() - 0.5) * 60,
                 opacity: 0,
                 duration: 1 + Math.random(),
-                onComplete: () => p.remove()
-              })
-            }
+                onComplete: () => p.remove(),
+              });
+            },
           }
         );
       }
@@ -1201,14 +1245,21 @@ const ParticleCard: React.FC<{
       particleInterval = setInterval(spawnParticles, 200);
 
       if (enableTilt) {
-        gsap.to(element, { rotateX: 0, rotateY: 0, scale: 1.02, duration: 0.3, ease: 'power2.out' });
+        gsap.to(element, {
+          rotateX: 0,
+          rotateY: 0,
+          scale: 1.02,
+          duration: 0.3,
+          ease: "power2.out",
+        });
       }
     };
 
     const handleMouseLeave = () => {
       isHoveredRef.current = false;
       clearInterval(particleInterval);
-      if (enableTilt) gsap.to(element, { rotateX: 0, rotateY: 0, scale: 1, duration: 0.3 });
+      if (enableTilt)
+        gsap.to(element, { rotateX: 0, rotateY: 0, scale: 1, duration: 0.3 });
       if (enableMagnetism) gsap.to(element, { x: 0, y: 0, duration: 0.3 });
     };
 
@@ -1224,7 +1275,7 @@ const ParticleCard: React.FC<{
         gsap.to(element, {
           rotateX: ((y - cy) / cy) * -5,
           rotateY: ((x - cx) / cx) * 5,
-          duration: 0.1
+          duration: 0.1,
         });
       }
 
@@ -1232,7 +1283,7 @@ const ParticleCard: React.FC<{
         gsap.to(element, {
           x: (x - cx) * 0.05,
           y: (y - cy) * 0.05,
-          duration: 0.3
+          duration: 0.3,
         });
       }
     };
@@ -1241,41 +1292,63 @@ const ParticleCard: React.FC<{
       if (onClick) onClick();
       if (!clickEffect) return;
       const rect = element.getBoundingClientRect();
-      const ripple = document.createElement('div');
+      const ripple = document.createElement("div");
       const size = Math.max(rect.width, rect.height) * 2;
-      
+
       ripple.style.cssText = `
         position: absolute;
         width: ${size}px;
         height: ${size}px;
         border-radius: 50%;
         background: radial-gradient(circle, rgba(${glowColor}, 0.3) 0%, transparent 70%);
-        left: ${e.clientX - rect.left - size/2}px;
-        top: ${e.clientY - rect.top - size/2}px;
+        left: ${e.clientX - rect.left - size / 2}px;
+        top: ${e.clientY - rect.top - size / 2}px;
         pointer-events: none;
         z-index: 50;
       `;
-      
+
       element.appendChild(ripple);
-      gsap.fromTo(ripple, { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: 0.6, onComplete: () => ripple.remove() });
+      gsap.fromTo(
+        ripple,
+        { scale: 0, opacity: 1 },
+        {
+          scale: 1,
+          opacity: 0,
+          duration: 0.6,
+          onComplete: () => ripple.remove(),
+        }
+      );
     };
 
-    element.addEventListener('mouseenter', handleMouseEnter);
-    element.addEventListener('mouseleave', handleMouseLeave);
-    element.addEventListener('mousemove', handleMouseMove);
-    element.addEventListener('click', handleClick);
+    element.addEventListener("mouseenter", handleMouseEnter);
+    element.addEventListener("mouseleave", handleMouseLeave);
+    element.addEventListener("mousemove", handleMouseMove);
+    element.addEventListener("click", handleClick);
 
     return () => {
       clearInterval(particleInterval);
-      element.removeEventListener('mouseenter', handleMouseEnter);
-      element.removeEventListener('mouseleave', handleMouseLeave);
-      element.removeEventListener('mousemove', handleMouseMove);
-      element.removeEventListener('click', handleClick);
+      element.removeEventListener("mouseenter", handleMouseEnter);
+      element.removeEventListener("mouseleave", handleMouseLeave);
+      element.removeEventListener("mousemove", handleMouseMove);
+      element.removeEventListener("click", handleClick);
     };
-  }, [disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor, onClick]);
+  }, [
+    disableAnimations,
+    enableTilt,
+    enableMagnetism,
+    clickEffect,
+    glowColor,
+    onClick,
+  ]);
 
   return (
-    <div ref={cardRef} className={className} style={{ position: 'relative', overflow: 'hidden' } as React.CSSProperties}>
+    <div
+      ref={cardRef}
+      className={className}
+      style={
+        { position: "relative", overflow: "hidden" } as React.CSSProperties
+      }
+    >
       {children}
     </div>
   );
@@ -1286,14 +1359,16 @@ const ParticleCard: React.FC<{
 const EventsBento = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobileDetection();
-  
+
   // State to track expanded events on mobile
-  const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>({});
+  const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const toggleEvent = (eventId: string) => {
-    setExpandedEvents(prev => ({
+    setExpandedEvents((prev) => ({
       ...prev,
-      [eventId]: !prev[eventId]
+      [eventId]: !prev[eventId],
     }));
   };
 
@@ -1304,36 +1379,92 @@ const EventsBento = () => {
       title: "The Logic Trial",
       registerLink: "https://unstop.com/o/NXHPdIn?lb=yMLi2eXX",
       items: [
-        { label: "Phase 1", title: "Aptitude", description: "MCQ Screening on CS Fundamentals" },
-        { label: "Phase 2", title: "Puzzle Chain", description: "PDF-based cryptographic logic hunt" },
-        { label: "Main Event", title: "BYTEHUNT", description: "Technical Quiz & DSA Challenge", isMain: true },
-        { label: "Phase 3", title: "Code Arena", description: "Advanced DSA & Optimization" },
-        { label: "Rewards", title: "Exciting Prizes", description: "Certificates & Cash Pool" },
-        { label: "Format", title: "Hybrid", description: "Online Qualifier + Offline Finale" }
-      ]
+        {
+          label: "Phase 1",
+          title: "Aptitude",
+          description: "MCQ Screening on CS Fundamentals",
+        },
+        {
+          label: "Phase 2",
+          title: "Puzzle Chain",
+          description: "PDF-based cryptographic logic hunt",
+        },
+        {
+          label: "Main Event",
+          title: "BYTEHUNT",
+          description: "Technical Quiz & DSA Challenge",
+          isMain: true,
+        },
+        {
+          label: "Opportunities",
+          title: "Career Boost",
+          description:
+            "Add achievements to your resume and stand out in placements",
+        },
+
+        {
+          label: "Rewards",
+          title: "Exciting Prizes",
+          description: "Certificates & Cash Pool",
+        },
+        {
+          label: "Format",
+          title: "Hybrid",
+          description: "Online Qualifier + Offline Finale",
+        },
+      ],
     },
     {
       id: "atheria",
       title: "The Strategy Trial",
-      registerLink: "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
+      registerLink:
+        "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
       items: [
-        { label: "Story", title: "Fantasy Realm", description: "Four ancient tribes race to conquer the Central Castle." },
-        { label: "Teams", title: "Tribe Based", description: "Flame, Aqua, Earth, and Wind tribes compete." },
-        { label: "Main Event", title: "Realm of Atheria", description: "Strategic Board Game Challenge", isMain: true },
-        { label: "Gameplay", title: "Turn Based", description: "Teams choose hidden point chits and move strategically." },
-        { label: "Objective", title: "Castle Conquest", description: "Be the first tribe to claim the throne of Atheria." },
-        { label: "Duration", title: "15–20 Minutes", description: "Fast-paced, immersive gameplay with escalating tension." }
-      ]
-    }
+        {
+          label: "Story",
+          title: "Fantasy Realm",
+          description:
+            "Four ancient tribes race to conquer the Central Castle.",
+        },
+        {
+          label: "Teams",
+          title: "Tribe Based",
+          description: "Flame, Aqua, Earth, and Wind tribes compete.",
+        },
+        {
+          label: "Main Event",
+          title: "Realm of Atheria",
+          description: "Strategic Board Game Challenge",
+          isMain: true,
+        },
+        {
+          label: "Gameplay",
+          title: "Turn Based",
+          description:
+            "Teams choose hidden point chits and move strategically.",
+        },
+        {
+          label: "Objective",
+          title: "Castle Conquest",
+          description: "Be the first tribe to claim the throne of Atheria.",
+        },
+        {
+          label: "Duration",
+          title: "15–20 Minutes",
+          description:
+            "Fast-paced, immersive gameplay with escalating tension.",
+        },
+      ],
+    },
   ];
 
   return (
-    <section id='events'>
+    <section id="events">
       <style jsx global>{`
         :root {
           --glow-color: ${DEFAULT_GLOW_COLOR};
         }
-        
+
         .bento-grid {
           display: grid;
           grid-template-columns: 1fr;
@@ -1353,7 +1484,7 @@ const EventsBento = () => {
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             /* COMPACT DESKTOP ROW HEIGHT */
-            grid-auto-rows: 140px; 
+            grid-auto-rows: 140px;
           }
 
           .bento-grid > .card:nth-child(3) {
@@ -1364,10 +1495,10 @@ const EventsBento = () => {
           .bento-grid > .card:nth-child(6) {
             grid-column: span 2;
           }
-          
-           .bento-grid .card {
-              min-height: 140px; /* Restore taller height for desktop */
-           }
+
+          .bento-grid .card {
+            min-height: 140px; /* Restore taller height for desktop */
+          }
         }
 
         .card {
@@ -1384,13 +1515,17 @@ const EventsBento = () => {
         }
 
         .card--main {
-           background: radial-gradient(circle at center, #1c1917 0%, #0c0a09 100%);
-           border-color: #78350f;
+          background: radial-gradient(
+            circle at center,
+            #1c1917 0%,
+            #0c0a09 100%
+          );
+          border-color: #78350f;
         }
 
         .card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
           border-color: rgba(251, 191, 36, 0.5);
         }
 
@@ -1408,7 +1543,7 @@ const EventsBento = () => {
 
         /* Inner Glow Effect */
         .card::after {
-          content: '';
+          content: "";
           position: absolute;
           inset: 0;
           border-radius: inherit;
@@ -1418,7 +1553,8 @@ const EventsBento = () => {
             rgba(var(--glow-color), calc(var(--glow-intensity) * 0.5)) 0%,
             transparent 50%
           );
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
           mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
           -webkit-mask-composite: xor;
           mask-composite: exclude;
@@ -1434,22 +1570,28 @@ const EventsBento = () => {
         }
       `}</style>
 
-      <div ref={containerRef} className={`${cinzel.className} min-h-screen bg-stone-950 text-stone-200 py-16 md:py-24 px-4 sm:px-8 md:px-12 xl:px-20 overflow-hidden`}>
-        <GlobalSpotlight containerRef={containerRef} disableAnimations={isMobile} />
+      <div
+        ref={containerRef}
+        className={`${cinzel.className} min-h-screen bg-stone-950 text-stone-200 py-16 md:py-24 px-4 sm:px-8 md:px-12 xl:px-20 overflow-hidden`}
+      >
+        <GlobalSpotlight
+          containerRef={containerRef}
+          disableAnimations={isMobile}
+        />
 
         {/* Global Heading */}
         <div className="text-center mb-12 md:mb-16">
-           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-amber-100 tracking-wider mb-4 md:mb-6 drop-shadow-2xl">
-              The Grand Trials
-           </h1>
-           <p className="text-stone-400 text-base md:text-lg max-w-2xl mx-auto font-sans px-2">
-             Two paths lie before you. Choose your trial and prove your worth in the arena of Logic or Strategy.
-           </p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-amber-100 tracking-wider mb-4 md:mb-6 drop-shadow-2xl">
+            The Grand Trials
+          </h1>
+          <p className="text-stone-400 text-base md:text-lg max-w-2xl mx-auto font-sans px-2">
+            Two paths lie before you. Choose your trial and prove your worth in
+            the arena of Logic or Strategy.
+          </p>
         </div>
 
         {/* SIDE-BY-SIDE CONTAINER */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 max-w-400 mx-auto items-start border-t border-stone-700 pt-8">
-          
           {events.map((event) => {
             const isExpanded = expandedEvents[event.id];
 
@@ -1457,13 +1599,13 @@ const EventsBento = () => {
             let displayItems = event.items;
 
             if (isMobile) {
-              const mainItem = event.items.find(i => i.isMain);
-              const otherItems = event.items.filter(i => !i.isMain);
+              const mainItem = event.items.find((i) => i.isMain);
+              const otherItems = event.items.filter((i) => !i.isMain);
 
               // On mobile, if not expanded, only show Main Item
               if (!isExpanded && mainItem) {
                 displayItems = [mainItem];
-              } 
+              }
               // If expanded, show Main Item first, then others
               else if (isExpanded && mainItem) {
                 displayItems = [mainItem, ...otherItems];
@@ -1471,7 +1613,10 @@ const EventsBento = () => {
             }
 
             return (
-              <div key={event.id} className="relative z-10 flex flex-col h-fit pt-6">
+              <div
+                key={event.id}
+                className="relative z-10 flex flex-col h-fit pt-6"
+              >
                 {/* Event Header */}
                 <div className="text-center mb-6 md:mb-8">
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-100 tracking-wider mb-2 drop-shadow-lg">
@@ -1485,7 +1630,9 @@ const EventsBento = () => {
                   {displayItems.map((item, idx) => (
                     <ParticleCard
                       key={`${event.id}-${item.label}`} // Unique key for reordering support
-                      className={`card ${item.isMain ? 'card--main' : ''} ${isMobile && item.isMain ? 'card--interactive' : ''}`}
+                      className={`card ${item.isMain ? "card--main" : ""} ${
+                        isMobile && item.isMain ? "card--interactive" : ""
+                      }`}
                       enableTilt={!isMobile}
                       enableMagnetism={!isMobile}
                       clickEffect={true}
@@ -1499,7 +1646,11 @@ const EventsBento = () => {
                       }}
                     >
                       <div className="flex justify-between items-center mb-1">
-                        <h3 className={`font-bold text-amber-50 ${item.isMain ? 'text-xl md:text-3xl' : 'text-base'} grow`}>
+                        <h3
+                          className={`font-bold text-amber-50 ${
+                            item.isMain ? "text-xl md:text-3xl" : "text-base"
+                          } grow`}
+                        >
                           {item.title}
                         </h3>
                         <span className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-amber-500/80 border border-amber-900/50 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
@@ -1508,21 +1659,36 @@ const EventsBento = () => {
                       </div>
 
                       <div className="mt-auto">
-                        <p className={`text-stone-400 font-sans ${item.isMain ? 'text-xs md:text-sm' : 'text-[10px] md:text-xs text-clamp-2'} mt-0 leading-tight`}>
+                        <p
+                          className={`text-stone-400 font-sans ${
+                            item.isMain
+                              ? "text-xs md:text-sm"
+                              : "text-[10px] md:text-xs text-clamp-2"
+                          } mt-0 leading-tight`}
+                        >
                           {item.description}
                         </p>
 
                         {/* Mobile Only: Chevron/Indicator for Main Card */}
                         {isMobile && item.isMain && (
                           <div className="mt-2 pt-2 border-t border-stone-800 flex items-center justify-center text-amber-500/80 text-[9px] tracking-widest uppercase">
-                            <span>{isExpanded ? 'Hide Details' : 'View Details'}</span>
-                            <svg 
-                              className={`w-3 h-3 ml-2 chevron ${isExpanded ? 'open' : ''}`} 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <span>
+                              {isExpanded ? "Hide Details" : "View Details"}
+                            </span>
+                            <svg
+                              className={`w-3 h-3 ml-2 chevron ${
+                                isExpanded ? "open" : ""
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 9l-7 7-7-7"
+                              />
                             </svg>
                           </div>
                         )}
@@ -1534,7 +1700,7 @@ const EventsBento = () => {
                 {/* Register Button */}
                 {(!isMobile || isExpanded) && (
                   <div className="mt-6 text-center pt-2 animate-in fade-in zoom-in duration-300">
-                    <a 
+                    <a
                       href={event.registerLink}
                       target="_blank"
                       rel="noreferrer"
@@ -1542,7 +1708,10 @@ const EventsBento = () => {
                     >
                       <div className="absolute inset-0 bg-amber-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
                       <button className="relative px-8 py-3 bg-stone-900 border border-amber-500/50 text-amber-100 font-bold tracking-widest uppercase hover:bg-amber-900/30 transition-all duration-300 transform hover:scale-105">
-                        Register for {event.id === 'bytehunt' ? 'BYTE HUNT' : 'REALM OF ATHERIA'}
+                        Register for{" "}
+                        {event.id === "bytehunt"
+                          ? "BYTE HUNT"
+                          : "REALM OF ATHERIA"}
                       </button>
                     </a>
                   </div>

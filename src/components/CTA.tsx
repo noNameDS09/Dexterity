@@ -1,34 +1,91 @@
-import React from 'react';
+'use client'
+
+import React from 'react'
+import { Cinzel } from "next/font/google"
+
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+})
 
 const CTA: React.FC = () => {
   return (
-    <section className="py-20 px-4 bg-linear-to-b from-stone-900 to-black">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl md:text-6xl font-bold text-amber-100 mb-8 font-cinzel">
-          Join the Challenge
+    <section
+      className={`${cinzel.className} h-screen flex items-center justify-center relative py-20 md:py-28 px-4 bg-linear-to-b from-stone-950 to-black overflow-hidden`}
+    >
+      {/* Soft background glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative max-w-5xl mx-auto text-center">
+        <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-amber-100 mb-6 tracking-wide drop-shadow-xl">
+          Join the Grand Trials
         </h2>
-        <p className="text-xl md:text-2xl text-stone-300 mb-12 leading-relaxed">
-          Choose your trial and prove your dexterity in the ultimate test of logic and strategy.
+
+        <p className="text-stone-300 text-base sm:text-lg md:text-xl max-w-3xl mx-auto mb-12 leading-relaxed font-sans">
+          Two paths lie before you — logic and strategy.  
+          Choose your trial and prove your worth in challenges forged for the bold.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-6 justify-center">
-          <button className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-500 text-stone-900 font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-cinzel">
-            Register for Etch
-          </button>
-          <button className="px-8 py-4 bg-linear-to-r from-green-600 to-emerald-600 text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-cinzel">
-            Enter Realm of Atheria
-          </button>
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          {/* BYTEHUNT */}
+          <a
+            href="https://unstop.com/o/NXHPdIn?lb=yMLi2eXX"
+            target="_blank"
+            rel="noreferrer"
+            className="relative group"
+          >
+            <div className="absolute inset-0 bg-purple-600 blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
+            <span
+              className="
+                relative inline-block
+                px-8 py-4
+                bg-linear-to-r from-purple-600 to-purple-900
+                text-white font-bold tracking-wider
+                rounded-xl
+                shadow-lg
+                hover:scale-105 transition-transform duration-300
+              "
+            >
+              Register for BYTEHUNT
+            </span>
+          </a>
+
+          {/* ATHERIA */}
+          <a
+            href="https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013"
+            target="_blank"
+            rel="noreferrer"
+            className="relative group"
+          >
+            <div className="absolute inset-0 bg-emerald-500 blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
+            <span
+              className="
+                relative inline-block
+                px-8 py-4
+                bg-linear-to-r from-emerald-600 to-green-700
+                text-white font-bold tracking-wider
+                rounded-xl
+                shadow-lg
+                hover:scale-105 transition-transform duration-300
+              "
+            >
+              Enter Realm of Atheria
+            </span>
+          </a>
         </div>
 
-        {/* Decorative elements */}
-        <div className="mt-16 flex justify-center space-x-8">
-          <div className="w-16 h-16 bg-linear-to-br from-amber-400/20 to-orange-500/20 rounded-full blur-sm"></div>
-          <div className="w-12 h-12 bg-linear-to-br from-green-400/20 to-emerald-500/20 rounded-full blur-sm"></div>
-          <div className="w-20 h-20 bg-linear-to-br from-stone-400/10 to-stone-500/10 rounded-full blur-sm"></div>
+        {/* Decorative Orbs */}
+        <div className="mt-16 flex justify-center gap-10 opacity-60">
+          <div className="w-14 h-14 bg-linear-to-br from-amber-400/30 to-orange-500/20 rounded-full blur-md" />
+          <div className="w-10 h-10 bg-linear-to-br from-emerald-400/30 to-green-500/20 rounded-full blur-md" />
+          <div className="w-16 h-16 bg-linear-to-br from-purple-400/20 to-indigo-500/20 rounded-full blur-md" />
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default CTA;
+export default CTA
