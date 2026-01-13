@@ -953,8 +953,6 @@
 //     </>
 //   )
 // }
-
-// export default EventsMagicBento
 'use client'
 import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
@@ -1293,28 +1291,24 @@ const EventsBento = () => {
       title: "The Logic Trial",
       registerLink: "https://unstop.com/o/NXHPdIn?lb=yMLi2eXX",
       items: [
-        { label: "Phase 1", title: "Aptitude", description: "MCQ Screening" },
-        { label: "Phase 2", title: "Puzzle Chain", description: "PDF-based cryptographic hunt" },
-        // Main Card (Will Span 2 cols)
+        { label: "Phase 1", title: "Aptitude", description: "MCQ Screening on CS Fundamentals" },
+        { label: "Phase 2", title: "Puzzle Chain", description: "PDF-based cryptographic logic hunt" },
         { label: "Main Event", title: "BYTEHUNT", description: "Technical Quiz & DSA Challenge", isMain: true },
         { label: "Phase 3", title: "Code Arena", description: "Advanced DSA & Optimization" },
         { label: "Rewards", title: "Exciting Prizes", description: "Certificates & Cash Pool" },
-        // Footer Card (Will Span 2 cols)
         { label: "Format", title: "Hybrid", description: "Online Qualifier + Offline Finale" }
       ]
     },
     {
       id: "atheria",
       title: "The Strategy Trial",
-      registerLink: "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
+      registerLink: "https://unstop.com/p/realm-of-atheria",
       items: [
         { label: "Concept", title: "Phygital", description: "Physical Board + Digital App" },
         { label: "Team", title: "Squad Based", description: "Teams of 4 compete for dominance" },
-        // Main Card (Will Span 2 cols)
         { label: "Main Event", title: "Realm of Atheria", description: "Strategic Board Game Challenge", isMain: true },
         { label: "Gameplay", title: "Tactical", description: "Resource management & attacks" },
         { label: "Objective", title: "Conquer", description: "Capture zones via logical tasks" },
-        // Footer Card (Will Span 2 cols)
         { label: "Date", title: "March 15th", description: "Live at the Main Auditorium" }
       ]
     }
@@ -1327,16 +1321,23 @@ const EventsBento = () => {
           --glow-color: ${DEFAULT_GLOW_COLOR};
         }
         
+        /* Mobile First Grid: Single column stack */
         .bento-grid {
           display: grid;
-          grid-template-columns: 1fr; /* Mobile Default */
+          grid-template-columns: 1fr;
           gap: 1rem;
           width: 100%;
           margin: 0 auto;
         }
 
-        /* Refined Grid for Side-by-Side Layout 
-          Instead of 4 columns, we use 2 columns per event on large screens.
+        /* Ensure cards have decent height on mobile */
+        .bento-grid .card {
+          min-height: 160px;
+        }
+
+        /* Tablet & Up (640px+): 
+          Switch to the 2-column tower layout.
+          Cards have fixed height rows for alignment.
         */
         @media (min-width: 640px) {
           .bento-grid {
@@ -1407,35 +1408,40 @@ const EventsBento = () => {
         }
       `}</style>
 
-      <div ref={containerRef} className={`${cinzel.className} min-h-screen bg-stone-950 text-stone-200 py-24 px-4 overflow-hidden`}>
+      {/* Responsive Container Padding: 
+        px-4 on mobile, growing to px-20 on large screens. 
+        Preventing horizontal overflow with overflow-hidden.
+      */}
+      <div ref={containerRef} className={`${cinzel.className} min-h-screen bg-stone-950 text-stone-200 py-16 md:py-24 px-4 sm:px-8 md:px-12 xl:px-20 overflow-hidden`}>
         <GlobalSpotlight containerRef={containerRef} disableAnimations={isMobile} />
 
         {/* Global Heading */}
-        <div className="text-center mb-16">
-           <h1 className="text-5xl md:text-6xl font-bold text-amber-100 tracking-wider mb-6 drop-shadow-2xl">
+        <div className="text-center mb-12 md:mb-16">
+           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-amber-100 tracking-wider mb-4 md:mb-6 drop-shadow-2xl">
               The Grand Trials
            </h1>
-           <p className="text-stone-400 text-lg max-w-2xl mx-auto font-sans">
+           <p className="text-stone-400 text-base md:text-lg max-w-2xl mx-auto font-sans px-2">
              Two paths lie before you. Choose your trial and prove your worth in the arena of Logic or Strategy.
            </p>
         </div>
 
-        {/* SIDE-BY-SIDE CONTAINER 
-          On XL screens, this becomes 2 columns.
+        {/* SIDE-BY-SIDE CONTAINER:
+           Stacks vertically (grid-cols-1) on mobile/tablet.
+           Goes side-by-side (grid-cols-2) on XL screens (1280px+).
         */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 max-w-[1600px] mx-auto items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 max-w-[1600px] mx-auto items-start">
           
           {events.map((event) => (
             <div key={event.id} className="relative z-10 flex flex-col h-full">
               {/* Event Header */}
-              <div className="text-center mb-8">
-                <h2 className="text-3xl md:text-4xl font-bold text-amber-100 tracking-wider mb-2 drop-shadow-lg">
+              <div className="text-center mb-6 md:mb-8">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-100 tracking-wider mb-2 drop-shadow-lg">
                   {event.title}
                 </h2>
                 <div className="w-16 h-0.5 bg-amber-500/50 mx-auto"></div>
               </div>
 
-              {/* Bento Grid */}
+              {/* Bento Grid Component */}
               <div className="bento-grid">
                 {event.items.map((item, idx) => (
                   <ParticleCard
@@ -1466,7 +1472,7 @@ const EventsBento = () => {
                 ))}
               </div>
 
-              {/* Register Button (Sticks to bottom of column) */}
+              {/* Register Button */}
               <div className="mt-8 text-center pt-4">
                 <a 
                   href={event.registerLink}
@@ -1476,7 +1482,7 @@ const EventsBento = () => {
                 >
                   <div className="absolute inset-0 bg-amber-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
                   <button className="relative px-8 py-3 bg-stone-900 border border-amber-500/50 text-amber-100 font-bold tracking-widest uppercase hover:bg-amber-900/30 transition-all duration-300 transform hover:scale-105">
-                    Register for {event.id === 'bytehunt' ? 'Logic' : 'Strategy'}
+                    Register for {event.id === 'bytehunt' ? 'BYTE HUNT' : 'REALM OF ATHERIA'}
                   </button>
                 </a>
               </div>
