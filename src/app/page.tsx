@@ -11,9 +11,9 @@ export default function Home() {
       <Hero />
       <About />
       <Events />
-      <EventFlow />
-      <CTA />
-      <Footer />
+      {/* <EventFlow /> */}
+      {/* <CTA /> */}
+      {/* <Footer /> */}
     </main>
   );
 }
