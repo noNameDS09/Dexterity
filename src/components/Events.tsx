@@ -529,7 +529,7 @@
 //         `}
 //       </style>
 
-//       <section className={`${cinzel.className} py-24 px-4 bg-gradient-to-b from-stone-900 to-stone-950`} id='events'>
+//       <section className={`${cinzel.className} text-center py-24 px-4 bg-gradient-to-b from-stone-900 to-stone-950`} id='events'>
 //         <GlobalSpotlight
 //           gridRef={gridRef}
 //           disableAnimations={shouldDisableAnimations}
@@ -1147,6 +1147,7 @@ const ParticleCard: React.FC<{
   enableTilt?: boolean;
   clickEffect?: boolean;
   enableMagnetism?: boolean;
+  onClick?: () => void;
 }> = ({
   children,
   className = '',
@@ -1155,7 +1156,8 @@ const ParticleCard: React.FC<{
   glowColor = DEFAULT_GLOW_COLOR,
   enableTilt = true,
   clickEffect = false,
-  enableMagnetism = false
+  enableMagnetism = false,
+  onClick
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
@@ -1236,6 +1238,7 @@ const ParticleCard: React.FC<{
     };
 
     const handleClick = (e: MouseEvent) => {
+      if (onClick) onClick();
       if (!clickEffect) return;
       const rect = element.getBoundingClientRect();
       const ripple = document.createElement('div');
@@ -1269,7 +1272,7 @@ const ParticleCard: React.FC<{
       element.removeEventListener('mousemove', handleMouseMove);
       element.removeEventListener('click', handleClick);
     };
-  }, [disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor]);
+  }, [disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor, onClick]);
 
   return (
     <div ref={cardRef} className={className} style={{ position: 'relative', overflow: 'hidden' } as React.CSSProperties}>
@@ -1284,6 +1287,16 @@ const EventsBento = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobileDetection();
   
+  // State to track expanded events on mobile
+  const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>({});
+
+  const toggleEvent = (eventId: string) => {
+    setExpandedEvents(prev => ({
+      ...prev,
+      [eventId]: !prev[eventId]
+    }));
+  };
+
   // Data for the two events
   const events: EventSectionProps[] = [
     {
@@ -1300,45 +1313,18 @@ const EventsBento = () => {
       ]
     },
     {
-  id: "atheria",
-  title: "The Strategy Trial",
-  registerLink: "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
-  items: [
-    {
-      label: "Story",
-      title: "Fantasy Realm",
-      description: "Four ancient tribes race to conquer the Central Castle of Eternum using knowledge, courage, and strategy."
-    },
-    {
-      label: "Teams",
-      title: "Tribe Based",
-      description: "Flame, Aqua, Earth, and Wind tribes compete on separate paths toward the castle."
-    },
-    // Main Card (Will Span 2 cols)
-    {
-      label: "Main Event",
-      title: "Realm of Atheria",
-      description: "A phygital fantasy board game where teams advance by answering timed questions and overcoming strategic gates.",
-      isMain: true
-    },
-    {
-      label: "Gameplay",
-      title: "Turn Based",
-      description: "Teams choose hidden point chits (5, 10, 15) and move based on accuracy and speed."
-    },
-    {
-      label: "Objective",
-      title: "Castle Conquest",
-      description: "Be the first tribe to reach the central castle and claim the throne of Atheria."
-    },
-    // Footer Card (Will Span 2 cols)
-    {
-      label: "Duration",
-      title: "15–20 Minutes",
-      description: "Fast-paced, immersive gameplay with escalating tension and strategic twists."
+      id: "atheria",
+      title: "The Strategy Trial",
+      registerLink: "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
+      items: [
+        { label: "Story", title: "Fantasy Realm", description: "Four ancient tribes race to conquer the Central Castle." },
+        { label: "Teams", title: "Tribe Based", description: "Flame, Aqua, Earth, and Wind tribes compete." },
+        { label: "Main Event", title: "Realm of Atheria", description: "Strategic Board Game Challenge", isMain: true },
+        { label: "Gameplay", title: "Turn Based", description: "Teams choose hidden point chits and move strategically." },
+        { label: "Objective", title: "Castle Conquest", description: "Be the first tribe to claim the throne of Atheria." },
+        { label: "Duration", title: "15–20 Minutes", description: "Fast-paced, immersive gameplay with escalating tension." }
+      ]
     }
-  ]
-}
   ];
 
   return (
@@ -1348,47 +1334,48 @@ const EventsBento = () => {
           --glow-color: ${DEFAULT_GLOW_COLOR};
         }
         
-        /* Mobile First Grid: Single column stack */
         .bento-grid {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 1rem;
+          gap: 0.75rem; /* Reduced gap on mobile */
           width: 100%;
           margin: 0 auto;
         }
 
-        /* Ensure cards have decent height on mobile */
+        /* COMPACT MOBILE HEIGHT */
         .bento-grid .card {
-          min-height: 160px;
+          min-height: 60px; /* Reduced minimum height */
         }
 
-        /* Tablet & Up (640px+): 
-          Switch to the 2-column tower layout.
-          Cards have fixed height rows for alignment.
-        */
+        /* Desktop Grid Layout (640px+) */
         @media (min-width: 640px) {
           .bento-grid {
             grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: 180px;
+            gap: 1rem;
+            /* COMPACT DESKTOP ROW HEIGHT */
+            grid-auto-rows: 140px; 
           }
 
-          /* The 3rd item (Main Event) spans full width and 2 rows height */
           .bento-grid > .card:nth-child(3) {
             grid-column: span 2;
             grid-row: span 2;
           }
 
-          /* The 6th item (Last one) spans full width to footer the grid */
           .bento-grid > .card:nth-child(6) {
             grid-column: span 2;
           }
+          
+           .bento-grid .card {
+              min-height: 140px; /* Restore taller height for desktop */
+           }
         }
 
         .card {
-          background-color: #0c0a09; /* Stone-950 */
-          border: 1px solid #44403c; /* Stone-700 */
-          border-radius: 1.25rem;
-          padding: 1.5rem;
+          background-color: #0c0a09;
+          border: 1px solid #44403c;
+          border-radius: 1rem; /* Slightly smaller radius for compactness */
+          /* REDUCED PADDING FOR COMPACTNESS */
+          padding: 1rem;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -1398,13 +1385,25 @@ const EventsBento = () => {
 
         .card--main {
            background: radial-gradient(circle at center, #1c1917 0%, #0c0a09 100%);
-           border-color: #78350f; /* Amber-900 */
+           border-color: #78350f;
         }
 
         .card:hover {
           transform: translateY(-4px);
           box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-          border-color: rgba(251, 191, 36, 0.5); /* Amber-400 */
+          border-color: rgba(251, 191, 36, 0.5);
+        }
+
+        .card--interactive {
+          cursor: pointer;
+        }
+
+        /* Chevron Animation */
+        .chevron {
+          transition: transform 0.3s ease;
+        }
+        .chevron.open {
+          transform: rotate(180deg);
         }
 
         /* Inner Glow Effect */
@@ -1435,10 +1434,6 @@ const EventsBento = () => {
         }
       `}</style>
 
-      {/* Responsive Container Padding: 
-        px-4 on mobile, growing to px-20 on large screens. 
-        Preventing horizontal overflow with overflow-hidden.
-      */}
       <div ref={containerRef} className={`${cinzel.className} min-h-screen bg-stone-950 text-stone-200 py-16 md:py-24 px-4 sm:px-8 md:px-12 xl:px-20 overflow-hidden`}>
         <GlobalSpotlight containerRef={containerRef} disableAnimations={isMobile} />
 
@@ -1452,70 +1447,109 @@ const EventsBento = () => {
            </p>
         </div>
 
-        {/* SIDE-BY-SIDE CONTAINER:
-           Stacks vertically (grid-cols-1) on mobile/tablet.
-           Goes side-by-side (grid-cols-2) on XL screens (1280px+).
-        */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 max-w-400 mx-auto items-start border-t border-stone-700 pt-12">
+        {/* SIDE-BY-SIDE CONTAINER */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 max-w-400 mx-auto items-start border-t border-stone-700 pt-8">
           
-          {events.map((event) => (
-            <div key={event.id} className="relative z-10 flex flex-col h-full pt-6">
-              {/* Event Header */}
-              <div className="text-center mb-6 md:mb-8">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-100 tracking-wider mb-2 drop-shadow-lg">
-                  {event.title}
-                </h2>
-                <div className="w-16 h-0.5 bg-amber-500/50 mx-auto"></div>
-              </div>
+          {events.map((event) => {
+            const isExpanded = expandedEvents[event.id];
 
-              {/* Bento Grid Component */}
-              <div className="bento-grid">
-                {event.items.map((item, idx) => (
-                  <ParticleCard
-                    key={idx}
-                    className={`card ${item.isMain ? 'card--main' : ''}`}
-                    enableTilt={!isMobile}
-                    enableMagnetism={!isMobile}
-                    clickEffect={true}
-                    particleCount={item.isMain ? 20 : 8}
-                    glowColor={DEFAULT_GLOW_COLOR}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="text-[10px] font-bold tracking-widest uppercase text-amber-500/80 border border-amber-900/50 px-2 py-0.5 rounded">
-                        {item.label}
-                      </span>
-                      {item.isMain && <span className="text-2xl">🏆</span>}
-                    </div>
+            // LOGIC: Filter and reorder items for Mobile
+            let displayItems = event.items;
 
-                    <div className="mt-auto">
-                      <h3 className={`font-bold text-amber-50 ${item.isMain ? 'text-2xl md:text-3xl mb-2' : 'text-lg mb-1'}`}>
-                        {item.title}
-                      </h3>
-                      <p className={`text-stone-400 font-sans ${item.isMain ? 'text-base' : 'text-xs text-clamp-2'}`}>
-                        {item.description}
-                      </p>
-                    </div>
-                  </ParticleCard>
-                ))}
-              </div>
+            if (isMobile) {
+              const mainItem = event.items.find(i => i.isMain);
+              const otherItems = event.items.filter(i => !i.isMain);
 
-              {/* Register Button */}
-              <div className="mt-8 text-center pt-4">
-                <a 
-                  href={event.registerLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-block relative group"
-                >
-                  <div className="absolute inset-0 bg-amber-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
-                  <button className="relative px-8 py-3 bg-stone-900 border border-amber-500/50 text-amber-100 font-bold tracking-widest uppercase hover:bg-amber-900/30 transition-all duration-300 transform hover:scale-105">
-                    Register for {event.id === 'bytehunt' ? 'BYTE HUNT' : 'REALM OF ATHERIA'}
-                  </button>
-                </a>
+              // On mobile, if not expanded, only show Main Item
+              if (!isExpanded && mainItem) {
+                displayItems = [mainItem];
+              } 
+              // If expanded, show Main Item first, then others
+              else if (isExpanded && mainItem) {
+                displayItems = [mainItem, ...otherItems];
+              }
+            }
+
+            return (
+              <div key={event.id} className="relative z-10 flex flex-col h-fit pt-6">
+                {/* Event Header */}
+                <div className="text-center mb-6 md:mb-8">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-100 tracking-wider mb-2 drop-shadow-lg">
+                    {event.title}
+                  </h2>
+                  <div className="w-full h-0.5 bg-amber-500/50 mx-auto"></div>
+                </div>
+
+                {/* Bento Grid */}
+                <div className="bento-grid">
+                  {displayItems.map((item, idx) => (
+                    <ParticleCard
+                      key={`${event.id}-${item.label}`} // Unique key for reordering support
+                      className={`card ${item.isMain ? 'card--main' : ''} ${isMobile && item.isMain ? 'card--interactive' : ''}`}
+                      enableTilt={!isMobile}
+                      enableMagnetism={!isMobile}
+                      clickEffect={true}
+                      particleCount={item.isMain ? 20 : 8}
+                      glowColor={DEFAULT_GLOW_COLOR}
+                      onClick={() => {
+                        // Only enable toggle click on Mobile and for the Main Card
+                        if (isMobile && item.isMain) {
+                          toggleEvent(event.id);
+                        }
+                      }}
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <h3 className={`font-bold text-amber-50 ${item.isMain ? 'text-xl md:text-3xl' : 'text-base'} grow`}>
+                          {item.title}
+                        </h3>
+                        <span className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-amber-500/80 border border-amber-900/50 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
+                          {item.label}
+                        </span>
+                      </div>
+
+                      <div className="mt-auto">
+                        <p className={`text-stone-400 font-sans ${item.isMain ? 'text-xs md:text-sm' : 'text-[10px] md:text-xs text-clamp-2'} mt-0 leading-tight`}>
+                          {item.description}
+                        </p>
+
+                        {/* Mobile Only: Chevron/Indicator for Main Card */}
+                        {isMobile && item.isMain && (
+                          <div className="mt-2 pt-2 border-t border-stone-800 flex items-center justify-center text-amber-500/80 text-[9px] tracking-widest uppercase">
+                            <span>{isExpanded ? 'Hide Details' : 'View Details'}</span>
+                            <svg 
+                              className={`w-3 h-3 ml-2 chevron ${isExpanded ? 'open' : ''}`} 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    </ParticleCard>
+                  ))}
+                </div>
+
+                {/* Register Button */}
+                {(!isMobile || isExpanded) && (
+                  <div className="mt-6 text-center pt-2 animate-in fade-in zoom-in duration-300">
+                    <a 
+                      href={event.registerLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-block relative group"
+                    >
+                      <div className="absolute inset-0 bg-amber-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
+                      <button className="relative px-8 py-3 bg-stone-900 border border-amber-500/50 text-amber-100 font-bold tracking-widest uppercase hover:bg-amber-900/30 transition-all duration-300 transform hover:scale-105">
+                        Register for {event.id === 'bytehunt' ? 'BYTE HUNT' : 'REALM OF ATHERIA'}
+                      </button>
+                    </a>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
-        
+            );
+          })}
         </div>
       </div>
     </section>

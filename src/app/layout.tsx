@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
 import GlobalNoise from "@/components/GlobalNoise";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,7 @@ export default function RootLayout({
       >
         {/* Global background noise */}
         <GlobalNoise />
-
+        <Navbar />
         {/* Site content */}
         <div className="relative z-0">
           {children}
