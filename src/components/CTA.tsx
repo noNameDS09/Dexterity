@@ -14,9 +14,9 @@ const CTA: React.FC = () => {
       className={`${cinzel.className} h-screen flex items-center justify-center relative py-20 md:py-28 px-4 bg-linear-to-b from-stone-950 to-black overflow-hidden`}
     >
       {/* Soft background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-3xl" />
-      </div>
+      {/* <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[125] h-[125] bg-amber-500/10 rounded-full blur-3xl" />
+      </div> */}
 
       <div className="relative max-w-5xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-amber-100 mb-6 tracking-wide drop-shadow-xl">

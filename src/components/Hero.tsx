@@ -127,12 +127,12 @@ const Hero: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-40"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-40"
       >
         <span className="text-[10px] text-stone-500 uppercase tracking-[0.2em]">
           Scroll
         </span>
-        <div className="w-px h-10 bg-gradient-to-b from-stone-500 to-transparent relative overflow-hidden">
+        <div className="w-px h-10 bg-linear-to-b from-stone-500 to-transparent relative overflow-hidden">
           <motion.div
             animate={{ y: [0, 40] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
