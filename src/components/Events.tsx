@@ -1342,7 +1342,7 @@ const EventsBento = () => {
   ];
 
   return (
-    <>
+    <section id='events'>
       <style jsx global>{`
         :root {
           --glow-color: ${DEFAULT_GLOW_COLOR};
@@ -1518,7 +1518,7 @@ const EventsBento = () => {
         
         </div>
       </div>
-    </>
+    </section>
   );
 };
 
