@@ -83,18 +83,38 @@ const Footer: React.FC = () => {
 
           {/* 3. Coordinators (Spans 3 columns) */}
           <div className="lg:col-span-3">
-            <h3 className="text-lg font-bold text-amber-100 mb-6 font-cinzel border-b border-stone-800 pb-2 inline-block">
-              Student Leads
-            </h3>
-            <ul className="space-y-3 font-sans text-sm">
-              {['Rohit Dahiphale', 'Atharv Yeole', 'Madhura Patwardhan'].map((name, idx) => (
-                <li key={idx} className="flex items-center justify-between border-b border-stone-800/50 pb-2 last:border-0">
-                  <span className="text-stone-300">{name}</span>
-                  <span className="text-xs text-amber-500/60 bg-amber-950/30 px-2 py-0.5 rounded border border-amber-900/30">Coord</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+  <h3 className="text-lg font-bold text-amber-100 mb-6 font-cinzel border-b border-stone-800 pb-2 inline-block">
+    Student Leads
+  </h3>
+
+  <ul className="space-y-3 font-sans text-sm">
+    {[
+      { name: 'Rohit Dahiphale', phone: '+91 98905 91622' },
+      { name: 'Atharv Yeole', phone: '+91 81495 02323' },
+      { name: 'Madhura Patwardhan', phone: '' },
+    ].map((lead, idx) => (
+      <li
+        key={idx}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-stone-800/50 pb-2 last:border-0 gap-1"
+      >
+        <div>
+          <span className="text-stone-300 block">{lead.name}</span>
+          <a
+            href={`tel:${lead.phone.replace(/\s+/g, '')}`}
+            className="text-xs text-stone-500 hover:text-amber-400 transition"
+          >
+            {lead.phone}
+          </a>
+        </div>
+
+        <span className="text-xs text-amber-500/60 bg-amber-950/30 px-2 py-0.5 rounded border border-amber-900/30 self-start sm:self-center">
+          Coord
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>
+
 
           {/* 4. Social Clubs (Spans 2 columns) */}
           <div className="lg:col-span-2">
