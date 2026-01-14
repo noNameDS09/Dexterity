@@ -125,6 +125,7 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-500 font-sans">
           <p>© 2026 DEXTERITY. All rights reserved.</p>
+          <p>Developed by me__avadhoot</p>
           <div className="flex gap-6">
             <span className="hover:text-amber-500 cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-amber-500 cursor-pointer transition-colors">Terms of Service</span>
