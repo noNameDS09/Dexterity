@@ -975,6 +975,7 @@ interface BentoItemProps {
   description: string;
   label: string;
   isMain?: boolean;
+  image?: string; // <--- Added image property
 }
 
 interface EventSectionProps {
@@ -1394,14 +1395,14 @@ const EventsBento = () => {
           title: "BYTEHUNT",
           description: "Technical Quiz & DSA Challenge",
           isMain: true,
+          // REPLACE WITH YOUR IMAGE URL
+          image: "/logos/BYTEHUNT.png" 
         },
         {
-          label: "Opportunities",
-          title: "Career Boost",
-          description:
-            "Add achievements to your resume and stand out in placements",
+          label: "Phase 3",
+          title: "Code Arena",
+          description: "Advanced DSA & Optimization",
         },
-
         {
           label: "Rewards",
           title: "Exciting Prizes",
@@ -1436,6 +1437,8 @@ const EventsBento = () => {
           title: "Realm of Atheria",
           description: "Strategic Board Game Challenge",
           isMain: true,
+          // REPLACE WITH YOUR IMAGE URL
+          image: "/logos/BYTEHUNT.png"
         },
         {
           label: "Gameplay",
@@ -1504,8 +1507,7 @@ const EventsBento = () => {
         .card {
           background-color: #0c0a09;
           border: 1px solid #44403c;
-          border-radius: 1rem; /* Slightly smaller radius for compactness */
-          /* REDUCED PADDING FOR COMPACTNESS */
+          border-radius: 1rem;
           padding: 1rem;
           display: flex;
           flex-direction: column;
@@ -1629,7 +1631,7 @@ const EventsBento = () => {
                 <div className="bento-grid">
                   {displayItems.map((item, idx) => (
                     <ParticleCard
-                      key={`${event.id}-${item.label}`} // Unique key for reordering support
+                      key={`${event.id}-${item.label}`}
                       className={`card ${item.isMain ? "card--main" : ""} ${
                         isMobile && item.isMain ? "card--interactive" : ""
                       }`}
@@ -1645,7 +1647,22 @@ const EventsBento = () => {
                         }
                       }}
                     >
-                      <div className="flex justify-between items-center mb-1">
+                      {/* --- MAIN CARD BACKGROUND IMAGE --- */}
+                      {/* Only render if it's the main card and has an image */}
+                      {item.isMain && item.image && (
+                        <div className="absolute inset-0 z-0">
+                          {/* Dark gradient overlay for text readability */}
+                          <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent opacity-90 z-10" />
+                          <img 
+                            src={item.image} 
+                            alt={item.title} 
+                            className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" 
+                          />
+                        </div>
+                      )}
+
+                      {/* --- CONTENT (Added relative z-10 to sit above image) --- */}
+                      <div className="relative z-10 flex justify-between items-center mb-1">
                         <h3
                           className={`font-bold text-amber-50 ${
                             item.isMain ? "text-xl md:text-3xl" : "text-base"
@@ -1653,12 +1670,12 @@ const EventsBento = () => {
                         >
                           {item.title}
                         </h3>
-                        <span className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-amber-500/80 border border-amber-900/50 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
+                        <span className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-amber-500/80 border border-amber-900/50 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap bg-black/40 backdrop-blur-sm">
                           {item.label}
                         </span>
                       </div>
 
-                      <div className="mt-auto">
+                      <div className="relative z-10 mt-auto">
                         <p
                           className={`text-stone-400 font-sans ${
                             item.isMain
@@ -1671,7 +1688,7 @@ const EventsBento = () => {
 
                         {/* Mobile Only: Chevron/Indicator for Main Card */}
                         {isMobile && item.isMain && (
-                          <div className="mt-2 pt-2 border-t border-stone-800 flex items-center justify-center text-amber-500/80 text-[9px] tracking-widest uppercase">
+                          <div className="mt-2 pt-2 border-t border-stone-800/50 flex items-center justify-center text-amber-500/80 text-[9px] tracking-widest uppercase">
                             <span>
                               {isExpanded ? "Hide Details" : "View Details"}
                             </span>
