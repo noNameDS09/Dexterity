@@ -1438,7 +1438,7 @@ const EventsBento = () => {
           description: "Strategic Board Game Challenge",
           isMain: true,
           // REPLACE WITH YOUR IMAGE URL
-          image: "/logos/BYTEHUNT.png"
+          image: "/logos/atheria.jpeg"
         },
         {
           label: "Gameplay",
