@@ -3,6 +3,7 @@ import React from 'react';
 import { FaInstagram, FaMapMarkerAlt, FaCalendarAlt, FaClock, FaUniversity } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Cinzel } from "next/font/google";
+import { useRouter } from 'next/navigation';
 
 const cinzel = Cinzel({
   variable: "--font-cinzel",
@@ -10,6 +11,7 @@ const cinzel = Cinzel({
 });
 
 const Footer: React.FC = () => {
+  const router = useRouter();
   const socialLinks = [
     { name: 'AESA', url: 'https://www.instagram.com/aesa_mmcoe?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==', color: 'hover:text-pink-500' },
     { name: 'NEURA', url: 'https://www.instagram.com/neura_ai_club?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==', color: 'hover:text-blue-400' },
@@ -20,7 +22,7 @@ const Footer: React.FC = () => {
     <footer className={`${cinzel.variable} relative bg-stone-950 text-stone-300 pt-20 pb-10 overflow-hidden`}>
       
       {/* Decorative Top Border Line */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-linear-to-r from-transparent via-amber-500/50 to-transparent"></div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
@@ -145,7 +147,10 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-500 font-sans">
           <p>© 2026 DEXTERITY. All rights reserved.</p>
+          <button onClick={()=> router.push('https://shreyash-wheat.vercel.app/')} className='hover:cursor-pointer'>
+
           <p>Developed by me__avadhoot</p>
+          </button>
           <div className="flex gap-6">
             <span className="hover:text-amber-500 cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-amber-500 cursor-pointer transition-colors">Terms of Service</span>
