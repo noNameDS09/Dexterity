@@ -953,6 +953,799 @@
 //     </>
 //   )
 // }
+
+// "use client";
+// import React, { useRef, useEffect, useState } from "react";
+// import { gsap } from "gsap";
+// import { Cinzel } from "next/font/google";
+
+// // --- Fonts & Constants ---
+// const cinzel = Cinzel({
+//   variable: "--font-cinzel",
+//   subsets: ["latin"],
+// });
+
+// const DEFAULT_PARTICLE_COUNT = 12;
+// const DEFAULT_SPOTLIGHT_RADIUS = 300;
+// const DEFAULT_GLOW_COLOR = "255, 160, 0"; // Amber/Gold Color
+// const MOBILE_BREAKPOINT = 768;
+
+// // --- Types ---
+// interface BentoItemProps {
+//   title: string;
+//   description: string;
+//   label: string;
+//   isMain?: boolean;
+//   image?: string; // <--- Added image property
+// }
+
+// interface EventSectionProps {
+//   id: string;
+//   title: string;
+//   registerLink: string;
+//   items: BentoItemProps[];
+// }
+
+// // --- Helper Functions ---
+// const createParticleElement = (
+//   x: number,
+//   y: number,
+//   color: string
+// ): HTMLDivElement => {
+//   const el = document.createElement("div");
+//   el.className = "particle";
+//   el.style.cssText = `
+//     position: absolute;
+//     width: 4px;
+//     height: 4px;
+//     border-radius: 50%;
+//     background: rgba(${color}, 1);
+//     box-shadow: 0 0 6px rgba(${color}, 0.6);
+//     pointer-events: none;
+//     z-index: 100;
+//     left: ${x}px;
+//     top: ${y}px;
+//   `;
+//   return el;
+// };
+
+// const calculateSpotlightValues = (radius: number) => ({
+//   proximity: radius * 0.5,
+//   fadeDistance: radius * 0.75,
+// });
+
+// const updateCardGlowProperties = (
+//   card: HTMLElement,
+//   mouseX: number,
+//   mouseY: number,
+//   glow: number,
+//   radius: number
+// ) => {
+//   const rect = card.getBoundingClientRect();
+//   const relativeX = ((mouseX - rect.left) / rect.width) * 100;
+//   const relativeY = ((mouseY - rect.top) / rect.height) * 100;
+
+//   card.style.setProperty("--glow-x", `${relativeX}%`);
+//   card.style.setProperty("--glow-y", `${relativeY}%`);
+//   card.style.setProperty("--glow-intensity", glow.toString());
+//   card.style.setProperty("--glow-radius", `${radius}px`);
+// };
+
+// const useMobileDetection = () => {
+//   const [isMobile, setIsMobile] = useState(false);
+//   useEffect(() => {
+//     const checkMobile = () =>
+//       setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+//     checkMobile();
+//     window.addEventListener("resize", checkMobile);
+//     return () => window.removeEventListener("resize", checkMobile);
+//   }, []);
+//   return isMobile;
+// };
+
+// // --- Components ---
+
+// const GlobalSpotlight: React.FC<{
+//   containerRef: React.RefObject<HTMLDivElement | null>;
+//   disableAnimations?: boolean;
+//   enabled?: boolean;
+//   spotlightRadius?: number;
+//   glowColor?: string;
+// }> = ({
+//   containerRef,
+//   disableAnimations = false,
+//   enabled = true,
+//   spotlightRadius = DEFAULT_SPOTLIGHT_RADIUS,
+//   glowColor = DEFAULT_GLOW_COLOR,
+// }) => {
+//   const spotlightRef = useRef<HTMLDivElement | null>(null);
+
+//   useEffect(() => {
+//     if (disableAnimations || !containerRef?.current || !enabled) return;
+
+//     const spotlight = document.createElement("div");
+//     spotlight.className = "global-spotlight";
+//     spotlight.style.cssText = `
+//       position: fixed;
+//       width: 800px;
+//       height: 800px;
+//       border-radius: 50%;
+//       pointer-events: none;
+//       background: radial-gradient(circle,
+//         rgba(${glowColor}, 0.15) 0%,
+//         rgba(${glowColor}, 0.08) 15%,
+//         rgba(${glowColor}, 0.04) 25%,
+//         rgba(${glowColor}, 0.02) 40%,
+//         rgba(${glowColor}, 0.01) 65%,
+//         transparent 70%
+//       );
+//       z-index: 200;
+//       opacity: 0;
+//       transform: translate(-50%, -50%);
+//       mix-blend-mode: screen;
+//     `;
+//     document.body.appendChild(spotlight);
+//     spotlightRef.current = spotlight;
+
+//     const handleMouseMove = (e: MouseEvent) => {
+//       if (!spotlightRef.current || !containerRef.current) return;
+
+//       const grids = containerRef.current.querySelectorAll(".bento-grid");
+//       let mouseInsideAny = false;
+
+//       grids.forEach((grid) => {
+//         const rect = grid.getBoundingClientRect();
+//         if (
+//           e.clientX >= rect.left &&
+//           e.clientX <= rect.right &&
+//           e.clientY >= rect.top &&
+//           e.clientY <= rect.bottom
+//         ) {
+//           mouseInsideAny = true;
+//         }
+//       });
+
+//       const cards = containerRef.current.querySelectorAll(".card");
+
+//       if (!mouseInsideAny) {
+//         gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3 });
+//         cards.forEach((card) =>
+//           (card as HTMLElement).style.setProperty("--glow-intensity", "0")
+//         );
+//         return;
+//       }
+
+//       const { proximity, fadeDistance } =
+//         calculateSpotlightValues(spotlightRadius);
+//       let minDistance = Infinity;
+
+//       cards.forEach((card) => {
+//         const cardElement = card as HTMLElement;
+//         const cardRect = cardElement.getBoundingClientRect();
+//         const centerX = cardRect.left + cardRect.width / 2;
+//         const centerY = cardRect.top + cardRect.height / 2;
+//         const distance =
+//           Math.hypot(e.clientX - centerX, e.clientY - centerY) -
+//           Math.max(cardRect.width, cardRect.height) / 2;
+//         const effectiveDistance = Math.max(0, distance);
+
+//         minDistance = Math.min(minDistance, effectiveDistance);
+
+//         let glowIntensity = 0;
+//         if (effectiveDistance <= proximity) glowIntensity = 1;
+//         else if (effectiveDistance <= fadeDistance)
+//           glowIntensity =
+//             (fadeDistance - effectiveDistance) / (fadeDistance - proximity);
+
+//         updateCardGlowProperties(
+//           cardElement,
+//           e.clientX,
+//           e.clientY,
+//           glowIntensity,
+//           spotlightRadius
+//         );
+//       });
+
+//       gsap.to(spotlightRef.current, {
+//         left: e.clientX,
+//         top: e.clientY,
+//         duration: 0.1,
+//       });
+
+//       const targetOpacity =
+//         minDistance <= proximity
+//           ? 0.8
+//           : minDistance <= fadeDistance
+//           ? ((fadeDistance - minDistance) / (fadeDistance - proximity)) * 0.8
+//           : 0;
+//       gsap.to(spotlightRef.current, { opacity: targetOpacity, duration: 0.2 });
+//     };
+
+//     const handleMouseLeave = () => {
+//       if (spotlightRef.current)
+//         gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3 });
+//     };
+
+//     document.addEventListener("mousemove", handleMouseMove);
+//     document.addEventListener("mouseleave", handleMouseLeave);
+
+//     return () => {
+//       document.removeEventListener("mousemove", handleMouseMove);
+//       document.removeEventListener("mouseleave", handleMouseLeave);
+//       spotlightRef.current?.remove();
+//     };
+//   }, [containerRef, disableAnimations, enabled, spotlightRadius, glowColor]);
+
+//   return null;
+// };
+
+// const ParticleCard: React.FC<{
+//   children: React.ReactNode;
+//   className?: string;
+//   disableAnimations?: boolean;
+//   particleCount?: number;
+//   glowColor?: string;
+//   enableTilt?: boolean;
+//   clickEffect?: boolean;
+//   enableMagnetism?: boolean;
+//   onClick?: () => void;
+// }> = ({
+//   children,
+//   className = "",
+//   disableAnimations = false,
+//   particleCount = DEFAULT_PARTICLE_COUNT,
+//   glowColor = DEFAULT_GLOW_COLOR,
+//   enableTilt = true,
+//   clickEffect = false,
+//   enableMagnetism = false,
+//   onClick,
+// }) => {
+//   const cardRef = useRef<HTMLDivElement>(null);
+//   const isHoveredRef = useRef(false);
+
+//   useEffect(() => {
+//     if (disableAnimations || !cardRef.current) return;
+//     const element = cardRef.current;
+
+//     const spawnParticles = () => {
+//       if (!isHoveredRef.current) return;
+//       const { width, height } = element.getBoundingClientRect();
+
+//       for (let i = 0; i < 3; i++) {
+//         const p = createParticleElement(
+//           Math.random() * width,
+//           Math.random() * height,
+//           glowColor
+//         );
+//         element.appendChild(p);
+
+//         gsap.fromTo(
+//           p,
+//           { scale: 0, opacity: 0 },
+//           {
+//             scale: 1,
+//             opacity: 1,
+//             duration: 0.3,
+//             onComplete: () => {
+//               gsap.to(p, {
+//                 x: (Math.random() - 0.5) * 60,
+//                 y: (Math.random() - 0.5) * 60,
+//                 opacity: 0,
+//                 duration: 1 + Math.random(),
+//                 onComplete: () => p.remove(),
+//               });
+//             },
+//           }
+//         );
+//       }
+//     };
+
+//     let particleInterval: NodeJS.Timeout;
+
+//     const handleMouseEnter = () => {
+//       isHoveredRef.current = true;
+//       particleInterval = setInterval(spawnParticles, 200);
+
+//       if (enableTilt) {
+//         gsap.to(element, {
+//           rotateX: 0,
+//           rotateY: 0,
+//           scale: 1.02,
+//           duration: 0.3,
+//           ease: "power2.out",
+//         });
+//       }
+//     };
+
+//     const handleMouseLeave = () => {
+//       isHoveredRef.current = false;
+//       clearInterval(particleInterval);
+//       if (enableTilt)
+//         gsap.to(element, { rotateX: 0, rotateY: 0, scale: 1, duration: 0.3 });
+//       if (enableMagnetism) gsap.to(element, { x: 0, y: 0, duration: 0.3 });
+//     };
+
+//     const handleMouseMove = (e: MouseEvent) => {
+//       if (!enableTilt && !enableMagnetism) return;
+//       const rect = element.getBoundingClientRect();
+//       const x = e.clientX - rect.left;
+//       const y = e.clientY - rect.top;
+//       const cx = rect.width / 2;
+//       const cy = rect.height / 2;
+
+//       if (enableTilt) {
+//         gsap.to(element, {
+//           rotateX: ((y - cy) / cy) * -5,
+//           rotateY: ((x - cx) / cx) * 5,
+//           duration: 0.1,
+//         });
+//       }
+
+//       if (enableMagnetism) {
+//         gsap.to(element, {
+//           x: (x - cx) * 0.05,
+//           y: (y - cy) * 0.05,
+//           duration: 0.3,
+//         });
+//       }
+//     };
+
+//     const handleClick = (e: MouseEvent) => {
+//       if (onClick) onClick();
+//       if (!clickEffect) return;
+//       const rect = element.getBoundingClientRect();
+//       const ripple = document.createElement("div");
+//       const size = Math.max(rect.width, rect.height) * 2;
+
+//       ripple.style.cssText = `
+//         position: absolute;
+//         width: ${size}px;
+//         height: ${size}px;
+//         border-radius: 50%;
+//         background: radial-gradient(circle, rgba(${glowColor}, 0.3) 0%, transparent 70%);
+//         left: ${e.clientX - rect.left - size / 2}px;
+//         top: ${e.clientY - rect.top - size / 2}px;
+//         pointer-events: none;
+//         z-index: 50;
+//       `;
+
+//       element.appendChild(ripple);
+//       gsap.fromTo(
+//         ripple,
+//         { scale: 0, opacity: 1 },
+//         {
+//           scale: 1,
+//           opacity: 0,
+//           duration: 0.6,
+//           onComplete: () => ripple.remove(),
+//         }
+//       );
+//     };
+
+//     element.addEventListener("mouseenter", handleMouseEnter);
+//     element.addEventListener("mouseleave", handleMouseLeave);
+//     element.addEventListener("mousemove", handleMouseMove);
+//     element.addEventListener("click", handleClick);
+
+//     return () => {
+//       clearInterval(particleInterval);
+//       element.removeEventListener("mouseenter", handleMouseEnter);
+//       element.removeEventListener("mouseleave", handleMouseLeave);
+//       element.removeEventListener("mousemove", handleMouseMove);
+//       element.removeEventListener("click", handleClick);
+//     };
+//   }, [
+//     disableAnimations,
+//     enableTilt,
+//     enableMagnetism,
+//     clickEffect,
+//     glowColor,
+//     onClick,
+//   ]);
+
+//   return (
+//     <div
+//       ref={cardRef}
+//       className={className}
+//       style={
+//         { position: "relative", overflow: "hidden" } as React.CSSProperties
+//       }
+//     >
+//       {children}
+//     </div>
+//   );
+// };
+
+// // --- Main Page Component ---
+
+// const EventsBento = () => {
+//   const containerRef = useRef<HTMLDivElement>(null);
+//   const isMobile = useMobileDetection();
+
+//   // State to track expanded events on mobile
+//   const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>(
+//     {}
+//   );
+
+//   const toggleEvent = (eventId: string) => {
+//     setExpandedEvents((prev) => ({
+//       ...prev,
+//       [eventId]: !prev[eventId],
+//     }));
+//   };
+
+//   // Data for the two events
+//   const events: EventSectionProps[] = [
+//     {
+//       id: "bytehunt",
+//       title: "The Logic Trial",
+//       registerLink: "https://unstop.com/o/NXHPdIn?lb=yMLi2eXX",
+//       items: [
+//         {
+//           label: "Phase 1",
+//           title: "Aptitude",
+//           description: "MCQ Screening on CS Fundamentals",
+//         },
+//         {
+//           label: "Phase 2",
+//           title: "Puzzle Chain",
+//           description: "PDF-based cryptographic logic hunt",
+//         },
+//         {
+//           label: "Main Event",
+//           title: "BYTEHUNT",
+//           description: "Technical Quiz & DSA Challenge",
+//           isMain: true,
+//           // REPLACE WITH YOUR IMAGE URL
+//           image: "/logos/BYTEHUNT.png" 
+//         },
+//         {
+//           label: "Phase 3",
+//           title: "Code Arena",
+//           description: "Advanced DSA & Optimization",
+//         },
+//         {
+//           label: "Rewards",
+//           title: "Exciting Prizes",
+//           description: "Certificates & Cash Pool",
+//         },
+//         {
+//           label: "Format",
+//           title: "Hybrid",
+//           description: "Online Qualifier + Offline Finale",
+//         },
+//       ],
+//     },
+//     {
+//       id: "atheria",
+//       title: "The Strategy Trial",
+//       registerLink:
+//         "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
+//       items: [
+//         {
+//           label: "Story",
+//           title: "Fantasy Realm",
+//           description:
+//             "Four ancient tribes race to conquer the Central Castle.",
+//         },
+//         {
+//           label: "Teams",
+//           title: "Tribe Based",
+//           description: "Flame, Aqua, Earth, and Wind tribes compete.",
+//         },
+//         {
+//           label: "Main Event",
+//           title: "Realm of Atheria",
+//           description: "Strategic Board Game Challenge",
+//           isMain: true,
+//           // REPLACE WITH YOUR IMAGE URL
+//           image: "/logos/atheria.jpeg"
+//         },
+//         {
+//           label: "Gameplay",
+//           title: "Turn Based",
+//           description:
+//             "Teams choose hidden point chits and move strategically.",
+//         },
+//         {
+//           label: "Objective",
+//           title: "Castle Conquest",
+//           description: "Be the first tribe to claim the throne of Atheria.",
+//         },
+//         {
+//           label: "Duration",
+//           title: "15–20 Minutes",
+//           description:
+//             "Fast-paced, immersive gameplay with escalating tension.",
+//         },
+//       ],
+//     },
+//   ];
+
+//   return (
+//     <section id="events">
+//       <style jsx global>{`
+//         :root {
+//           --glow-color: ${DEFAULT_GLOW_COLOR};
+//         }
+
+//         .bento-grid {
+//           display: grid;
+//           grid-template-columns: 1fr;
+//           gap: 0.75rem; /* Reduced gap on mobile */
+//           width: 100%;
+//           margin: 0 auto;
+//         }
+
+//         /* COMPACT MOBILE HEIGHT */
+//         .bento-grid .card {
+//           min-height: 60px; /* Reduced minimum height */
+//         }
+
+//         /* Desktop Grid Layout (640px+) */
+//         @media (min-width: 640px) {
+//           .bento-grid {
+//             grid-template-columns: repeat(2, 1fr);
+//             gap: 1rem;
+//             /* COMPACT DESKTOP ROW HEIGHT */
+//             grid-auto-rows: 140px;
+//           }
+
+//           .bento-grid > .card:nth-child(3) {
+//             grid-column: span 2;
+//             grid-row: span 2;
+//           }
+
+//           .bento-grid > .card:nth-child(6) {
+//             grid-column: span 2;
+//           }
+
+//           .bento-grid .card {
+//             min-height: 140px; /* Restore taller height for desktop */
+//           }
+//         }
+
+//         .card {
+//           background-color: #0c0a09;
+//           border: 1px solid #44403c;
+//           border-radius: 1rem;
+//           padding: 1rem;
+//           display: flex;
+//           flex-direction: column;
+//           justify-content: space-between;
+//           transition: all 0.3s ease;
+//           position: relative;
+//         }
+
+//         .card--main {
+//           background: radial-gradient(
+//             circle at center,
+//             #1c1917 0%,
+//             #0c0a09 100%
+//           );
+//           border-color: #78350f;
+//         }
+
+//         .card:hover {
+//           transform: translateY(-4px);
+//           box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+//           border-color: rgba(251, 191, 36, 0.5);
+//         }
+
+//         .card--interactive {
+//           cursor: pointer;
+//         }
+
+//         /* Chevron Animation */
+//         .chevron {
+//           transition: transform 0.3s ease;
+//         }
+//         .chevron.open {
+//           transform: rotate(180deg);
+//         }
+
+//         /* Inner Glow Effect */
+//         .card::after {
+//           content: "";
+//           position: absolute;
+//           inset: 0;
+//           border-radius: inherit;
+//           padding: 2px;
+//           background: radial-gradient(
+//             var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+//             rgba(var(--glow-color), calc(var(--glow-intensity) * 0.5)) 0%,
+//             transparent 50%
+//           );
+//           -webkit-mask: linear-gradient(#fff 0 0) content-box,
+//             linear-gradient(#fff 0 0);
+//           mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+//           -webkit-mask-composite: xor;
+//           mask-composite: exclude;
+//           pointer-events: none;
+//           opacity: 1;
+//         }
+
+//         .text-clamp-2 {
+//           display: -webkit-box;
+//           -webkit-line-clamp: 2;
+//           -webkit-box-orient: vertical;
+//           overflow: hidden;
+//         }
+//       `}</style>
+
+//       <div
+//         ref={containerRef}
+//         className={`${cinzel.className} min-h-screen bg-stone-950 text-stone-200 py-16 md:py-24 px-4 sm:px-8 md:px-12 xl:px-20 overflow-hidden`}
+//       >
+//         <GlobalSpotlight
+//           containerRef={containerRef}
+//           disableAnimations={isMobile}
+//         />
+
+//         {/* Global Heading */}
+//         <div className="text-center mb-12 md:mb-16">
+//           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-amber-100 tracking-wider mb-4 md:mb-6 drop-shadow-2xl">
+//             The Grand Trials
+//           </h1>
+//           <p className="text-stone-400 text-base md:text-lg max-w-2xl mx-auto font-sans px-2">
+//             Two paths lie before you. Choose your trial and prove your worth in
+//             the arena of Logic or Strategy.
+//           </p>
+//         </div>
+
+//         {/* SIDE-BY-SIDE CONTAINER */}
+//         <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 max-w-400 mx-auto items-start border-t border-stone-700 pt-8">
+//           {events.map((event) => {
+//             const isExpanded = expandedEvents[event.id];
+
+//             // LOGIC: Filter and reorder items for Mobile
+//             let displayItems = event.items;
+
+//             if (isMobile) {
+//               const mainItem = event.items.find((i) => i.isMain);
+//               const otherItems = event.items.filter((i) => !i.isMain);
+
+//               // On mobile, if not expanded, only show Main Item
+//               if (!isExpanded && mainItem) {
+//                 displayItems = [mainItem];
+//               }
+//               // If expanded, show Main Item first, then others
+//               else if (isExpanded && mainItem) {
+//                 displayItems = [mainItem, ...otherItems];
+//               }
+//             }
+
+//             return (
+//               <div
+//                 key={event.id}
+//                 className="relative z-10 flex flex-col h-fit pt-6"
+//               >
+//                 {/* Event Header */}
+//                 <div className="text-center mb-6 md:mb-8">
+//                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-100 tracking-wider mb-2 drop-shadow-lg">
+//                     {event.title}
+//                   </h2>
+//                   <div className="w-full h-0.5 bg-amber-500/50 mx-auto"></div>
+//                 </div>
+
+//                 {/* Bento Grid */}
+//                 <div className="bento-grid">
+//                   {displayItems.map((item, idx) => (
+//                     <ParticleCard
+//                       key={`${event.id}-${item.label}`}
+//                       className={`card ${item.isMain ? "card--main" : ""} ${
+//                         isMobile && item.isMain ? "card--interactive" : ""
+//                       }`}
+//                       enableTilt={!isMobile}
+//                       enableMagnetism={!isMobile}
+//                       clickEffect={true}
+//                       particleCount={item.isMain ? 20 : 8}
+//                       glowColor={DEFAULT_GLOW_COLOR}
+//                       onClick={() => {
+//                         // Only enable toggle click on Mobile and for the Main Card
+//                         if (isMobile && item.isMain) {
+//                           toggleEvent(event.id);
+//                         }
+//                       }}
+//                     >
+//                       {/* --- MAIN CARD BACKGROUND IMAGE --- */}
+//                       {/* Only render if it's the main card and has an image */}
+//                       {item.isMain && item.image && (
+//                         <div className="absolute inset-0 z-0">
+//                           {/* Dark gradient overlay for text readability */}
+//                           <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent opacity-90 z-10" />
+//                           <img 
+//                             src={item.image} 
+//                             alt={item.title} 
+//                             className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" 
+//                           />
+//                         </div>
+//                       )}
+
+//                       {/* --- CONTENT (Added relative z-10 to sit above image) --- */}
+//                       <div className="relative z-10 flex justify-between items-center mb-1">
+//                         <h3
+//                           className={`font-bold text-amber-50 ${
+//                             item.isMain ? "text-xl md:text-3xl" : "text-base"
+//                           } grow`}
+//                         >
+//                           {item.title}
+//                         </h3>
+//                         <span className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-amber-500/80 border border-amber-900/50 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap bg-black/40 backdrop-blur-sm">
+//                           {item.label}
+//                         </span>
+//                       </div>
+
+//                       <div className="relative z-10 mt-auto">
+//                         <p
+//                           className={`text-stone-400 font-sans ${
+//                             item.isMain
+//                               ? "text-xs md:text-sm"
+//                               : "text-[10px] md:text-xs text-clamp-2"
+//                           } mt-0 leading-tight`}
+//                         >
+//                           {item.description}
+//                         </p>
+
+//                         {/* Mobile Only: Chevron/Indicator for Main Card */}
+//                         {isMobile && item.isMain && (
+//                           <div className="mt-2 pt-2 border-t border-stone-800/50 flex items-center justify-center text-amber-500/80 text-[9px] tracking-widest uppercase">
+//                             <span>
+//                               {isExpanded ? "Hide Details" : "View Details"}
+//                             </span>
+//                             <svg
+//                               className={`w-3 h-3 ml-2 chevron ${
+//                                 isExpanded ? "open" : ""
+//                               }`}
+//                               fill="none"
+//                               stroke="currentColor"
+//                               viewBox="0 0 24 24"
+//                             >
+//                               <path
+//                                 strokeLinecap="round"
+//                                 strokeLinejoin="round"
+//                                 strokeWidth={2}
+//                                 d="M19 9l-7 7-7-7"
+//                               />
+//                             </svg>
+//                           </div>
+//                         )}
+//                       </div>
+//                     </ParticleCard>
+//                   ))}
+//                 </div>
+
+//                 {/* Register Button */}
+//                 {(!isMobile || isExpanded) && (
+//                   <div className="mt-6 text-center pt-2 animate-in fade-in zoom-in duration-300">
+//                     <a
+//                       href={event.registerLink}
+//                       target="_blank"
+//                       rel="noreferrer"
+//                       className="inline-block relative group"
+//                     >
+//                       <div className="absolute inset-0 bg-amber-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
+//                       <button className="relative px-8 py-3 bg-stone-900 border border-amber-500/50 text-amber-100 font-bold tracking-widest uppercase hover:bg-amber-900/30 transition-all duration-300 transform hover:scale-105">
+//                         Register for{" "}
+//                         {event.id === "bytehunt"
+//                           ? "BYTE HUNT"
+//                           : "REALM OF ATHERIA"}
+//                       </button>
+//                     </a>
+//                   </div>
+//                 )}
+//               </div>
+//             );
+//           })}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default EventsBento;
+
+
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
@@ -975,13 +1768,19 @@ interface BentoItemProps {
   description: string;
   label: string;
   isMain?: boolean;
-  image?: string; // <--- Added image property
+  image?: string;
+}
+
+// Updated Interface for Multiple Links
+interface EventLinks {
+  unstop: string;
+  googleForm: string;
 }
 
 interface EventSectionProps {
   id: string;
   title: string;
-  registerLink: string;
+  links: EventLinks; // Changed from single string to object
   items: BentoItemProps[];
 }
 
@@ -1378,7 +2177,11 @@ const EventsBento = () => {
     {
       id: "bytehunt",
       title: "The Logic Trial",
-      registerLink: "https://unstop.com/o/NXHPdIn?lb=yMLi2eXX",
+      // --- UPDATED LINKS OBJECT ---
+      links: {
+        unstop: "https://unstop.com/o/NXHPdIn?lb=yMLi2eXX",
+        googleForm: "https://forms.gle/CSJgaqyvs3iTpFAK6", // REPLACE WITH YOUR BYTEHUNT FORM LINK
+      },
       items: [
         {
           label: "Phase 1",
@@ -1395,7 +2198,6 @@ const EventsBento = () => {
           title: "BYTEHUNT",
           description: "Technical Quiz & DSA Challenge",
           isMain: true,
-          // REPLACE WITH YOUR IMAGE URL
           image: "/logos/BYTEHUNT.png" 
         },
         {
@@ -1418,8 +2220,11 @@ const EventsBento = () => {
     {
       id: "atheria",
       title: "The Strategy Trial",
-      registerLink:
-        "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
+      // --- UPDATED LINKS OBJECT ---
+      links: {
+        unstop: "https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013",
+        googleForm: "https://docs.google.com/forms/d/e/1FAIpQLSeWcOtmzzvsqspQEcQmyPGsHtrvFJmxUCU7jvCwSLLiDFIJig/viewform?usp=publish-editor", // REPLACE WITH YOUR ATHERIA FORM LINK
+      },
       items: [
         {
           label: "Story",
@@ -1437,7 +2242,6 @@ const EventsBento = () => {
           title: "Realm of Atheria",
           description: "Strategic Board Game Challenge",
           isMain: true,
-          // REPLACE WITH YOUR IMAGE URL
           image: "/logos/atheria.jpeg"
         },
         {
@@ -1648,7 +2452,6 @@ const EventsBento = () => {
                       }}
                     >
                       {/* --- MAIN CARD BACKGROUND IMAGE --- */}
-                      {/* Only render if it's the main card and has an image */}
                       {item.isMain && item.image && (
                         <div className="absolute inset-0 z-0">
                           {/* Dark gradient overlay for text readability */}
@@ -1661,7 +2464,7 @@ const EventsBento = () => {
                         </div>
                       )}
 
-                      {/* --- CONTENT (Added relative z-10 to sit above image) --- */}
+                      {/* --- CONTENT --- */}
                       <div className="relative z-10 flex justify-between items-center mb-1">
                         <h3
                           className={`font-bold text-amber-50 ${
@@ -1714,23 +2517,37 @@ const EventsBento = () => {
                   ))}
                 </div>
 
-                {/* Register Button */}
+                {/* --- REGISTRATION BUTTONS (DUAL) --- */}
                 {(!isMobile || isExpanded) && (
-                  <div className="mt-6 text-center pt-2 animate-in fade-in zoom-in duration-300">
+                  <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center pt-2 animate-in fade-in zoom-in duration-300">
+                    
+                    {/* BUTTON 1: UNSTOP */}
                     <a
-                      href={event.registerLink}
+                      href={event.links.unstop}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-block relative group"
+                      className="w-full sm:w-auto relative group"
                     >
                       <div className="absolute inset-0 bg-amber-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
-                      <button className="relative px-8 py-3 bg-stone-900 border border-amber-500/50 text-amber-100 font-bold tracking-widest uppercase hover:bg-amber-900/30 transition-all duration-300 transform hover:scale-105">
-                        Register for{" "}
-                        {event.id === "bytehunt"
-                          ? "BYTE HUNT"
-                          : "REALM OF ATHERIA"}
+                      <button className="w-full sm:w-auto relative px-6 py-3 bg-stone-900 border border-amber-500/50 text-amber-100 font-bold tracking-widest uppercase hover:bg-amber-900/30 transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm">
+                        Register on Unstop
                       </button>
                     </a>
+                    <span>OR</span>
+                    {/* BUTTON 2: GOOGLE FORM */}
+                    <a
+                      href={event.links.googleForm}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full sm:w-auto relative group"
+                    >
+                      {/* Subtle blue/stone glow for secondary button */}
+                      <div className="absolute inset-0 bg-stone-500 blur-lg opacity-10 group-hover:opacity-30 transition-opacity duration-300"></div>
+                      <button className="w-full sm:w-auto relative px-6 py-3 bg-transparent border border-stone-600 text-stone-300 font-bold tracking-widest uppercase hover:bg-stone-800/50 hover:text-white hover:border-stone-400 transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm">
+                        Register via Google Form
+                      </button>
+                    </a>
+
                   </div>
                 )}
               </div>

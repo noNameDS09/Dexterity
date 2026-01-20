@@ -31,7 +31,7 @@ const CTA: React.FC = () => {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
           {/* BYTEHUNT */}
-          <a
+          {/* <a
             href="https://unstop.com/o/NXHPdIn?lb=yMLi2eXX"
             target="_blank"
             rel="noreferrer"
@@ -51,10 +51,10 @@ const CTA: React.FC = () => {
             >
               Register for BYTEHUNT
             </span>
-          </a>
+          </a> */}
 
           {/* ATHERIA */}
-          <a
+          {/* <a
             href="https://unstop.com/p/realm-of-atheria-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1623013"
             target="_blank"
             rel="noreferrer"
@@ -74,7 +74,7 @@ const CTA: React.FC = () => {
             >
               Enter Realm of Atheria
             </span>
-          </a>
+          </a> */}
         </div>
 
         {/* Decorative Orbs */}
